@@ -1,0 +1,26 @@
+{
+    "name":"Project Name",
+    "department":"DepartMent Name",
+    "description":"Project Description",
+    "user":"Refrence to UserId",
+    "work":[
+        {
+            "fileName":"Name of the File",
+            "url":"File Url",
+            "ContentType":"Type of the Content",
+            "SourceLanguage":"Source Language of the file",
+            "TargetLanguage":"Target Language of the file",
+            "Size":"Size of the File",
+            "type":"Type of the File"
+        },
+        {
+            "fileName":"Name of the File",
+            "url":"File Url",
+            "ContentType":"Type of the Content",
+            "SourceLanguage":"Source Language of the file",
+            "TargetLanguage":"Target Language of the file",
+            "Size":"Size of the File",
+            "type":"Type of the File"
+        }
+    ]
+}

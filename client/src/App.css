@@ -1,0 +1,17 @@
+/* Target the specific element with the class "custom-scrollbar" */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px; /* Width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #a1a1a1; /* Color of the thumb */
+  border-radius: 4px; /* Rounded corners of the thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #747474; /* Color of the thumb on hover */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the track background */
+}
