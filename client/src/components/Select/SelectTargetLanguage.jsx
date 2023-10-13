@@ -1,15 +1,16 @@
+import Select from 'react-select';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Select from 'react-select';
+
 import { updateFile } from '../../redux/reducers/file';
 import { languageOptions, languageStyles } from '../data';
 
 
-
 const SelectTargetLanguage = ({ name }) => {
     const { files } = useSelector((state) => state.file)
-    const [selectedLanguage, setSelectedLanguage] = useState('')
+    const [selectedLanguage, setSelectedLanguage] = useState([])
     const [file, setFile] = useState({})
+    
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -17,21 +18,26 @@ const SelectTargetLanguage = ({ name }) => {
             let flleData = files.find((data) => data.name === name)
             setFile(flleData)
         }
-    }, [files])
+    }, [files,name])
     const onChange = (lang) => {
         if (file) {
-            const updatedFile = { ...file, targetLanguage: lang }
+           let languages = []
+           lang.map((val) =>{
+            languages.push(val.value)
+           })
+           let updatedFile = {...file,targetLanguage:languages}
             setFile(updatedFile)
-            setSelectedLanguage(lang)
+            setSelectedLanguage((prev) => [...prev,lang])
             dispatch(updateFile(updatedFile))
         }
     }
     return (
         <Select
             options={languageOptions}
-            value={languageOptions.find((option) => option.value === selectedLanguage)}
-            onChange={(selectedOption) => onChange(selectedOption.value)}
+            // value={languageOptions.find((option) => option.value === selectedLanguage)}
+            onChange={(selectedOption) => onChange(selectedOption)}
             styles={languageStyles}
+            isMulti={true}
         />
     );
 };

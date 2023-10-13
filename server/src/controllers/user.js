@@ -3,41 +3,28 @@ const crypto = require('crypto')
 const { db } = require('../../firebase');
 const generateToken = require('../utils/generateToken');
 const sendEmail = require('../utils/sendEmail');
+const validator = require('validator')
 
-exports.registerUser = async(req,res) =>{
-    try {
-        const {name,email,password} = req.body
-        const userCollection = db.collection('users');
-        const userSnapshot = await userCollection.where('email', '==' ,email).get();
-
-        if(!userSnapshot.empty)
-            return res.status(400).json({message:"User already Registered"})
-        
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password,salt)
-
-        await db.collection("users").add({name,email,password:hashedPassword})
-
-        return res.status(201).json({message:"User Registered"})
-    } catch (error) {
-        console.log("User Registration : ", error.message)
-        return res.status(500).json({message:"Something went wrong"})
-    }
-}
-
+// User Login
 exports.loginUser = async(req,res) =>{
     try {
         const {email,password,code} = req.body;
         if(!email || !password || !code)
             return res.status(400).json({message:"Plzz provide all fields"})
-
+        
+        if(!validator.isEmail(email)){
+            return res.status(400).json({message:"Invalid Email Id"})
+        }
         const userCollection = db.collection('users');
         const userSnapshot = await userCollection.where('email', '==', email).get();
 
         if(userSnapshot.empty)
-            return res.status(404).json({message:"Invalid Email Id"})
+            return res.status(404).json({message:"Invalid Credentials"})
 
         const userData = userSnapshot.docs[0].data();
+        if(!userData.status){
+            return res.status(400).json({message:"Email Id Deactivated"})
+        }
         const userId = userSnapshot.docs[0].id;
 
         // To Verify Code
@@ -48,24 +35,25 @@ exports.loginUser = async(req,res) =>{
         // To verify password
         const passwordMatch = await bcrypt.compare(password, userData?.password);
         if(!passwordMatch)
-            return res.status(400).json({message:"Invalid Password"})
+            return res.status(400).json({message:"Invalid Credentials"})
 
         const user = {
             id:userId,
-            name: userData?.name,
+            name: userData?.firstName + " " + userData?.lastName,
             email: userData?.email,
+            role: userData?.role
         }
         
         const token = generateToken(user,'24h')
         const cookieOptions = {
-          expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          maxAge: 86400000,
           httpOnly: true,
           sameSite: "none",
-          secure: false,
+          secure: true,
         };
         res.cookie("token", token, cookieOptions);
         
-        return res.status(200).json({user,token})
+        return res.status(200).json({user})
     } catch (error) {
         console.log("User-Login : ", error.message)
         return res.status(500).json({message:"Something went wrong"})
@@ -81,10 +69,14 @@ exports.sendCode = async(req,res) =>{
         if(userSnapshot.empty){
             return res.status(404).json({message:"User with email not registered"})
         }
+        const userDoc = userSnapshot.docs[0]
+        const userData = userDoc.data()
+         if(!userData.status){
+            return res.status(400).json({message:"Email Id Deactivated"})
+        }
         const code =  crypto.randomInt(0,1000000000)
         await sendEmail(email,code);
         
-        const userDoc = userSnapshot.docs[0]
         await userDoc.ref.update({verificationCode:code})
         return res.status(200).json({message:"Verification code send to Email Id"})
     } catch (error) {

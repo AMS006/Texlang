@@ -3,68 +3,61 @@ import Layout from '../layout';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {useForm} from 'react-hook-form'
+import {yupResolver} from '@hookform/resolvers/yup'
+import * as yup from 'yup'
+import Input from '../components/Common/Input';
+
+
+const formSchema = yup.object({
+    currentPassword:yup.string().required("Current Password is Required"),
+    newPassword:yup.string().required("New password is required").min(4,"Password must be atleast 4 characters long"),
+    confirmPassword:yup.string().required("Confirm password is required").oneOf([yup.ref('newPassword'),null], 'Password must match')
+})
 
 const ChangePassword = () => {
-    const [currentPassword, setCurrentPassword] = useState('')
-    const [newPassword, setNewPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [passwordError, setPasswordError] = useState(false);
+
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (passwordError) {
-            toast.error("Password Does Not Match")
-        } else {
-            setLoading(true);
+    const {handleSubmit,formState:{errors},register,reset} = useForm({
+        resolver:yupResolver(formSchema)
+    })
+    const formSubmit = async(data) =>{
+        try {
+            setLoading(true)
             await axios({
                 method: "POST",
-                url: 'http://localhost:4000/user/changePassword',
-                data: { currentPassword, newPassword }
-            }).then(() => {
-                setLoading(false)
-                toast.success("Password Changed Successfully")
-                navigate('/Enterprise/EnterpriseLanding')
-            }).catch((err) => {
-                const error = err.response.data.message
-                const errorMessage = error ? error : "Unable to Reset Password"
-                toast.error(errorMessage)
-                setLoading(false)
+                url: 'http://localhost:4000/api/user/changePassword',
+                data,
+                withCredentials:true
             })
+            setLoading(false)
+            toast.success("Password Changed Successfully")
+            reset()
+            navigate('/Enterprise/EnterpriseLanding')
+        } catch (error) {
+            const errorMessage = error?.response?.data?.message || "Unable to Reset Password"
+            toast.error(errorMessage)
+            setLoading(false)
         }
     }
-    const handleConfirmPasswordChange = (e) => {
-        setConfirmPassword(e.target.value)
-        if (e.target.value !== newPassword) {
-            setPasswordError(true)
-        } else {
-            setPasswordError(false)
-        }
-    }
+
     return (
-        <div className='pl-64'>
-            <div className='flex flex-col gap-4 px-6 py-4'>
-                <h3 className='font-sans text-2xl'>Change Password</h3>
-                <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
-                    <div>
-                        <label htmlFor="currentPassword">Current Password</label>
-                        <input type="password" id='currentPassword' required value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} placeholder='Enter current password ' className='px-2 py-1.5 border border-gray-400 w-full' />
-                    </div>
-                    <div>
-                        <label htmlFor="newPassword">New Password</label>
-                        <input type="password" id='newPassword' value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required placeholder='Enter New password' className='px-2 py-1.5 border border-gray-400 w-full' />
-                    </div>
-                    <div>
-                        <label htmlFor="confirmPassword">Confirm New Password</label>
-                        <input type="password" id='code' value={confirmPassword} onChange={handleConfirmPasswordChange} required placeholder='Enter Confirm password' className='px-2 py-1.5 border border-gray-400 w-full' />
-                        {passwordError && <p className='text-xs text-red-500'>Confirm password and new password does not match</p>}
-                    </div>
-                    <div>
-                        <input type="submit" disabled={loading} value={`${loading ? 'Verifying...' : 'Submit'}`} className={`bg-blue-500 text-white px-2.5 py-1.5 ${loading ? 'opacity-50' : 'cursor-pointer hover:opacity-90'}`} />
-                    </div>
-                </form>
-            </div>
+        <div className='flex flex-col gap-4 px-6 py-4'>
+            <h3 className='font-sans text-2xl'>Change Password</h3>
+            <form onSubmit={handleSubmit(formSubmit)} className='flex flex-col gap-3'>
+               
+                <Input label={'Current Password'} id={'currentPassword'} type={'password'} placeholder={'Enter Current Password'} register={{...register('currentPassword')}} errorMessage={errors?.currentPassword?.message} />
+            
+                <Input label={'New Password'} id={'newpassword'} type={'password'} placeholder={'Enter New Password'} register={{...register('newPassword')}} errorMessage={errors?.newPassword?.message} />
+
+                <Input label={'Confirm Password'} id={'confirmPassword'} type={'password'} placeholder={'Enter Confirm Password'} register={{...register('confirmPassword')}} errorMessage={errors?.confirmPassword?.message} />
+
+                <div className='flex items-start justify-start'>
+                    <input type="submit" disabled={loading} value={`${loading ? 'Verifying...' : 'Submit'}`} className={`bg-blue-500 text-white px-2.5 py-1.5 w-auto ${loading ? 'opacity-50' : 'cursor-pointer hover:opacity-90'}`} />
+                </div>
+            </form>
         </div>
     )
 }

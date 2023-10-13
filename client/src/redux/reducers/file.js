@@ -10,14 +10,14 @@ const flieSlice = createSlice({
     initialState,
     reducers:{
         setFilesData: (state,action) =>{
-            state.files = [...action.payload]
+            const currFiles = current(state.files)
+            state.files = action.payload
         },
         setClearFile:(state,action) =>{
             state.clearFile = action.payload
         },
         updateFile: (state,action) =>{
             const currFiles = current(state.files)
-            
             if(currFiles.length > 0){
                 state.files = currFiles.map((file) =>{
                     if(action.payload.name !== file.name)

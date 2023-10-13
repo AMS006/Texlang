@@ -7,7 +7,9 @@ const Layout = (Component) => ({ ...props }) => {
         <main>
             <Sidebar />
             <Topbar />
-            <Component {...props} />
+            <div className='w-full lg:pl-64'>
+                <Component {...props} />
+            </div>         
         </main>
     )
 }

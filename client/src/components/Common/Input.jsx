@@ -1,17 +1,19 @@
 import React from 'react'
 
-const Input = ({ type, placeholder, id, handleChange, value }) => {
-    return (
-        <input
-            type={type}
+const Input = ({label,id,type, placeholder,register,errorMessage}) => {
+  return (
+    <div className='flex flex-col gap-0 w-full'>
+        {label && <label htmlFor={id}>{label}</label>}
+        <input 
+            type={type} 
+            id={id}  
             placeholder={placeholder}
-            id={id}
-            required
-            value={value}
-            onChange={handleChange}
-            className='border-b border-[#27a4b0] focus:outline-none p-1 w-full'
+            {...register}
+            className='px-2 py-1.5 border border-gray-400 w-full focus:outline-blue-500' 
         />
-    )
+        {errorMessage && <span className='text-xs text-red-500'>{errorMessage}</span>}
+    </div>
+  )
 }
 
 export default Input

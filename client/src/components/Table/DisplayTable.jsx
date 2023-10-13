@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { useTable } from 'react-table';
 import { useSelector } from 'react-redux';
-import './table.css'
+
 import { displayTableColumns } from '../data'
+import './table.css'
 
 
 
@@ -23,13 +24,13 @@ const DisplayTable = () => {
     );
 
     return (
-        <div>
-            <table {...getTableProps()} className="table">
+        <div className=''>
+            <table {...getTableProps()} className="table ">
                 <thead>
                     {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map((column) => (
-                                <th {...column.getHeaderProps()}>
+                                <th {...column.getHeaderProps()} style={{maxWidth:'3rem'}}>
                                     {column.render('Header')}
                                 </th>
                             ))}
@@ -40,7 +41,7 @@ const DisplayTable = () => {
                     {rows.map((row) => {
                         prepareRow(row);
                         return (
-                            <tr {...row.getRowProps()}>
+                            <tr {...row.getRowProps()} >
                                 {row.cells.map((cell) => {
                                     return (
                                         <td {...cell.getCellProps()}>{cell.render('Cell')}</td>

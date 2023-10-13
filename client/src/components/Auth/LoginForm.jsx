@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { LoginUser } from '../../redux/actions/user'
 import { useNavigate } from 'react-router-dom'
 import { clearUser, setForgotPassword } from '../../redux/reducers/user'
-import Input from '../Common/Input'
+import SignInInput from '../Common/SignInInput'
 
 const LoginForm = () => {
     const [companyCode, setCompanyCode] = useState('')
@@ -19,24 +19,22 @@ const LoginForm = () => {
     const navigate = useNavigate()
 
     const sendCode = async () => {
-        if (emailError || email.length === 0) {
-            toast.error("Plzz Enter Registered Email Id")
-        } else {
+        try {
+            if(emailError || email.length === 0)
+                return toast.error("Invalid Email Id")
             setSendingCode(true)
             await axios({
                 method: "POST",
-                url: "http://localhost:4000/user/sendCode",
+                url: "http://localhost:4000/api/user/sendCode",
                 data: { email }
-            }).then(() => {
-                toast.success("Verification Code Send to Email Id")
-                setCodeSend(true)
-                setSendingCode(false)
-            }).catch((err) => {
-                const error = err.response?.data?.message
-                const errorMessage = error ? error : "Plzz Enter a Valid Email Id"
-                toast.error(errorMessage)
             })
-
+            toast.success("Verification Code Send to Email Id")
+            setCodeSend(true)
+            setSendingCode(false)
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Enter a Valid Email Id";
+            toast.error(errorMessage)
+            setSendingCode(false)
         }
     }
     const handleEmailChange = (e) => {
@@ -57,8 +55,13 @@ const LoginForm = () => {
         dispatch(LoginUser({ email, password, code }))
     }
     useEffect(() => {
-        if (user && !error)
-            navigate('/Enterprise/EnterpriseLanding')
+        if (user && !error) {
+            if (user.role === 'admin') {
+                navigate('/Admin/Dashboard')
+            } else {
+                navigate('/Enterprise/EnterpriseLanding')
+            }
+        }
         if (error) {
             toast.error(error)
             dispatch(clearUser())
@@ -69,17 +72,17 @@ const LoginForm = () => {
             <h1 className='font-sans text-3xl'>Texlang Enterprise Login</h1>
             <form onSubmit={handleSubmit} className='flex flex-col justify-center gap-6 w-full'>
                 <div className='w-full'>
-                    <Input type='text' value={companyCode} placeholder={'Company code'} id={'companyCode'} handleChange={(e) => setCompanyCode(e.target.value)} />
+                    <SignInInput type='text' value={companyCode} placeholder={'Company code'} id={'companyCode'} handleChange={(e) => setCompanyCode(e.target.value)} />
                 </div>
                 <div className='w-full'>
-                    <Input type='email' value={email} placeholder={'Username'} id={'email'} handleChange={handleEmailChange} />
+                    <SignInInput type='email' value={email} placeholder={'Username'} id={'email'} handleChange={handleEmailChange} />
                     {emailError && <p className='text-xs text-red-500'>Plzz Enter a Valid Email Id</p>}
                 </div>
                 <div className='w-full'>
-                    <Input type='password' value={password} placeholder={'Password'} id={'password'} handleChange={(e) => setPassword(e.target.value)} />
+                    <SignInInput type='password' value={password} placeholder={'Password'} id={'password'} handleChange={(e) => setPassword(e.target.value)} />
                 </div>
                 <div className='w-full'>
-                    <Input type='text' value={code} placeholder={'Code'} id={'code'} handleChange={(e) => setCode(e.target.value)} />
+                    <SignInInput type='text' value={code} placeholder={'Code'} id={'code'} handleChange={(e) => setCode(e.target.value)} />
                 </div>
                 {codeSend && <div className='flex justify-center'>
                     <button className={`bg-blue-500 py-1.5 px-2.5 text-white rounded ${loading ? 'opacity-50 cursor-default' : 'hover:opacity-95'}`} disabled={loading}>{loading ? 'Loading...' : 'Sign In'}</button>

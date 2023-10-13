@@ -6,17 +6,17 @@ import { getProjects } from '../redux/actions/project'
 
 const ProjectList = () => {
     const dispatch = useDispatch()
+
     useEffect(() => {
-        dispatch(getProjects())
+        dispatch(getProjects(5, 1))
     }, [dispatch])
+
     return (
-        <div className='pl-64'>
-            <div className='px-6 py-8'>
-                <h1 className='text-2xl font-sans pb-2.5'>Project List</h1>
-                <hr />
-                <div>
-                    <ProjectListTable />
-                </div>
+        <div className='px-6 py-8'>
+            <h1 className='text-2xl font-sans pb-2.5'>Project List</h1>
+            <hr />
+            <div>
+                <ProjectListTable />
             </div>
         </div>
     )

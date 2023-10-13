@@ -4,7 +4,7 @@ export const RegisterUser = (name,email,password) => async(dispatch) =>{
     try {
         await axios({
             method:"POST",
-            url:"http://localhost:4000/user/register",
+            url:"http://localhost:4000/api/user/register",
             data:{name,email,password}
         })
     } catch (error) {
@@ -17,7 +17,7 @@ export const LoginUser = ({email,password,code}) => async(dispatch) =>{
         const res = await axios({
             method: "POST",
             data: { email, password,code },
-            url: "http://localhost:4000/user/login",
+            url: "http://localhost:4000/api/user/login",
             withCredentials: true
         })
 
@@ -36,7 +36,7 @@ export const getUser = () => async(dispatch) =>{
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
         const res = await axios({
             method: "GET",
-            url: "http://localhost:4000/user",
+            url: "http://localhost:4000/api/user",
             withCredentials: true
         })
         dispatch(setUser(res.data.user))
