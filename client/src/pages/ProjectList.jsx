@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react'
-import Layout from '../layout'
-import ProjectListTable from '../components/Table/ProjectListTable'
 import { useDispatch } from 'react-redux'
+
+import Layout from '../layout'
 import { getProjects } from '../redux/actions/project'
+import ProjectListTable from '../components/Table/ProjectListTable'
 
 const ProjectList = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(getProjects(5, 1))
+        dispatch(getProjects(2,1,''))
     }, [dispatch])
 
     return (

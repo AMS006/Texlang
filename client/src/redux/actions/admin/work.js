@@ -14,6 +14,19 @@ export const getProjectWork = (projectId) => async (dispatch) => {
         dispatch(setWorkError())
     }
 }
+export const getInvoiceWork = (projectId) => async (dispatch) => {
+    try {
+        dispatch(workRequest())
+        const works = await axios({
+            method: "GET",
+            url: `http://localhost:4000/api/admin/projectWork/invoice/${projectId}`,
+            withCredentials:true
+        })
+        dispatch(setWorks(works.data.works))
+    } catch (error) {
+        dispatch(setWorkError())
+    }
+}
 export const getPieChartData = () => async(dispatch) =>{
     try {
        const pieChartData = await axios({

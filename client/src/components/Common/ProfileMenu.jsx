@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from 'react';
-import { BiLogOut, BiSolidKey } from 'react-icons/bi'
+import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { BiLogOut, BiSolidKey } from 'react-icons/bi'
+
 import { logoutUser } from '../../redux/actions/user';
 
 const ProfileMenu = ({ menuOpen, setMenuOpen }) => {

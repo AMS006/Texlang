@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react'
-import { companyProjectListTableColumns } from '../../data';
+import  { useMemo } from 'react'
 import { useSelector } from 'react-redux';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
+
+import { companyProjectListTableColumns } from '../../data';
 
 const CompanyProjectsTable = () => {
     const { companyProjects , loading } = useSelector((state) => state.project)

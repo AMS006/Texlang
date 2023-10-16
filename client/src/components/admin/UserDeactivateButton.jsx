@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import UserUpdateModal from './UserUpdateModal'
+import  { useState } from 'react'
+
 import UserAlertModal from './UserAlertModal'
 
 const UserDeactivateButton = ({user}) => {

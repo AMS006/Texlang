@@ -1,12 +1,12 @@
-const admin = require('firebase-admin');
 require('dotenv').config()
+const admin = require('firebase-admin');
 
 const credentials = {
   type: "service_account",
   project_id: process.env.FIREBASE_PROJECT_ID,
   private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
   private_key: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  client_email: "firebase-adminsdk-cda99@texlang.iam.gserviceaccount.com",
+  client_email: process.env.FIREBAE_CLIENT_EMAIL,
   client_id: process.env.FIREBASE_CLIENT_ID,
   auth_uri: "https://accounts.google.com/o/oauth2/auth",
   token_uri: "https://oauth2.googleapis.com/token",
@@ -23,4 +23,4 @@ admin.initializeApp({
 const db = admin.firestore();
 const bucket = admin.storage().bucket();
 
-module.exports = { db ,bucket};
+module.exports = { db ,bucket , admin};

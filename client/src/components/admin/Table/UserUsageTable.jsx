@@ -2,9 +2,9 @@ import { useMemo } from 'react'
 import { useTable } from 'react-table';
 import { useSelector } from 'react-redux';
 
-import { manageUserTable } from '../../data';
+import { userUsageTable } from '../../data';
 
-const UserManagementTable = () => {
+const UserUsageTable = () => {
     
     const { allUsers , allUserLoading } = useSelector((state) => state.user)
     const data = useMemo(() => allUsers,[allUsers])
@@ -16,7 +16,7 @@ const UserManagementTable = () => {
         prepareRow,
     } = useTable(
         {
-            columns: manageUserTable,
+            columns: userUsageTable,
             data,
         },
     );
@@ -55,7 +55,7 @@ const UserManagementTable = () => {
             ) : (
                 <tbody>
                     <tr>
-                        <td colSpan={manageUserTable.length} className="text-center py-1.5 border w-full">
+                        <td colSpan={userUsageTable.length} className="text-center py-1.5 border w-full">
                             {allUserLoading ? 'Loading...' : 'No Records Found'}
                         </td>
                     </tr>
@@ -65,4 +65,4 @@ const UserManagementTable = () => {
     </div>
   )
 }
-export default UserManagementTable
+export default UserUsageTable

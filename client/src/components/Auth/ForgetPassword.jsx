@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import axios from 'axios'
+import * as yup from 'yup'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
-import { setChangePassword, setForgotPassword, setForgotPasswordEmail } from '../../redux/reducers/user'
-import axios from 'axios'
-import {yupResolver} from '@hookform/resolvers/yup'
-import * as yup from 'yup'
-import Input from '../Common/Input'
 import { useForm } from 'react-hook-form'
+import {yupResolver} from '@hookform/resolvers/yup'
+
+import Input from '../Common/Input'
+import { setChangePassword, setForgotPassword, setForgotPasswordEmail } from '../../redux/reducers/user'
 
 const formSchema = yup.object({
     email: yup.string().required("Email is required").email('Email is not valid!')

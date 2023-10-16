@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react'
-import {  latestProjectColumn, workTableColumn } from '../../data';
-import { useSelector } from 'react-redux';
+import { useMemo } from 'react'
 import { useTable } from 'react-table';
+import { useSelector } from 'react-redux';
+
+import {  workTableColumn } from '../../data';
 
 const WorksTable = () => {
     const { works , loading } = useSelector((state) => state.work)
@@ -52,7 +53,7 @@ const WorksTable = () => {
                     ) : (
                         <tbody>
                             <tr>
-                                <td colSpan={latestProjectColumn.length} className="text-center py-1.5 border w-full">
+                                <td colSpan={workTableColumn.length} className="text-center py-1.5 border w-full">
                                     {loading ? 'Loading...' : 'No Records Found'}
                                 </td>
                             </tr>

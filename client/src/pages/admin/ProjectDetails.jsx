@@ -1,27 +1,32 @@
-import React, { useEffect } from 'react'
-import Layout from '../../layout'
-import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
-import { getProject } from '../../redux/actions/project'
 import dayjs from 'dayjs'
-import WorksTable from '../../components/admin/Table/WorksTable'
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+
+import Layout from '../../layout'
 import { getProjectWork } from '../../redux/actions/admin/work'
+import WorksTable from '../../components/admin/Table/WorksTable'
+import { getProjectDetailsAdmin } from '../../redux/actions/admin/project'
 
 const ProjectDetails = () => {
     const { id } = useParams()
     const dispatch = useDispatch()
     useEffect(() => {
-       dispatch(getProject(id))
+       dispatch(getProjectDetailsAdmin(id))
     }, [id, dispatch])
+
     const { selectedProject } = useSelector((state) => state.project)
+
     useEffect(() => {
         if (selectedProject) {
             dispatch(getProjectWork(selectedProject.id))
         }
-    },[selectedProject])
+    },[selectedProject,dispatch])
+
     if (!selectedProject) {
         return <p>Loading...</p>
     }
+
   return (
     <div className='flex flex-col gap-6 px-6 py-8'>
         <div className='border border-yellow-500'>
@@ -49,7 +54,7 @@ const ProjectDetails = () => {
                 </div>
                <div className='flex items-center gap-2.5'>
                       <h4 className='w-2/5'>Current Status</h4>
-                      <h2 className='font-semibold bg-yellow-500 text-white px-1.5 py-1'>{selectedProject?.status}</h2>
+                      <h2 className={`font-semibold ${selectedProject?.status==='Completed'?'bg-blue-500':'bg-yellow-500'} text-white px-1.5 py-1`}>{selectedProject?.status}</h2>
                 </div>
                 <div className='flex items-center gap-2.5'>
                       <h4 className='w-2/5'>Poject Total Cost Rs.</h4>

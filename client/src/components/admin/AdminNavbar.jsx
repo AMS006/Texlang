@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { MdOutlineDiamond } from 'react-icons/md'
-import { SlPuzzle } from 'react-icons/sl'
-import { AiOutlineHome,AiOutlineUser ,AiFillFolderOpen} from 'react-icons/ai'
-import { BsChevronLeft } from 'react-icons/bs'
-import {TbFileInvoice} from 'react-icons/tb'
 import { Link } from 'react-router-dom'
+import { SlPuzzle } from 'react-icons/sl'
+import { BiWalletAlt } from 'react-icons/bi'
+import {TbFileInvoice} from 'react-icons/tb'
+import { BsChevronLeft } from 'react-icons/bs'
+import { MdOutlineDiamond } from 'react-icons/md'
+import { AiOutlineHome,AiOutlineUser } from 'react-icons/ai'
 
 const AdminNavbar = () => {
     const [toggleProject,setToggleProject] = useState(false)
@@ -42,8 +43,8 @@ const AdminNavbar = () => {
                     <SlPuzzle size={20}/>
                     <span>Project Details</span>
                 </Link>
-                 <Link to={'/Admin/ManageUser'} className='flex items-center gap-2.5 px-2 hover:bg-[#67707975] py-1.5'>
-                    <AiOutlineUser size={20}/>
+                 <Link to={'/Admin/UserAsPerUsage'} className='flex items-center gap-2.5 px-2 hover:bg-[#67707975] py-1.5'>
+                    <BiWalletAlt size={20}/>
                     <span>User As Per Usage</span>
                 </Link>
                 <Link to={'/Admin/ManageUser'} className='flex items-center gap-2.5 px-2 hover:bg-[#67707975] py-1.5'>

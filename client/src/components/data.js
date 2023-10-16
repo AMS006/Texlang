@@ -110,12 +110,12 @@ export const projectListTableColumns = [
     {
         Header: 'End Data',
         accessor: 'end_date',
-        Cell: info => <span className="text-sm py-1 px-1.5 bg-[#f1c40f] text-white">{dayjs(info.value).format("DD/MM/YYYY")}</span>
+        Cell: info => <span className={`text-sm py-1 px-1.5 ${info.data[info.row.index]?.status==='Completed'?'bg-blue-500':'bg-yellow-500'} text-white`}>{dayjs(info.value).format("DD/MM/YYYY")}</span>
     },
     {
         Header:'Status',
         accessor:'status',
-        Cell: info => <span className="bg-red-500 py-1 px-1.5 text-sm text-white ">{info.value}</span>
+        Cell: info => <span className={`${info.value==='Completed'?'bg-blue-500':'bg-red-500'} py-1 px-1.5 text-sm text-white `}>{info.value}</span>
     }
 ];
 export const companyProjectListTableColumns = [
@@ -206,6 +206,29 @@ export const manageUserTable = [
         }
     }
 ]
+export const userUsageTable = [
+    {
+        Header: 'Sr. No.',
+        accessor: (row, idx) => idx + 1
+    },
+    {
+        Header: 'User name',
+        Cell:(info) =>(
+            <span>{info.row.original?.firstName + " " + info.row.original?.lastName}</span>
+        )
+    },
+    {
+        Header: 'E-mail',
+        accessor: 'email',
+        Cell: (info) => <span className="text-sm">{info.value}</span>
+    },
+    {
+        Header: 'Total Billed Amount(₹)',
+        accessor: 'billedAmount',
+        Cell: (info) => <span className="text-sm">{Number(info.value).toFixed(2)}</span>
+    },
+   
+]
 export const workTableColumn = [
     {
         Header: 'Sr. No.',
@@ -226,7 +249,7 @@ export const workTableColumn = [
         accessor: 'targetLanguage',
         Cell: info => 
             <span className='capitalize'>
-                {info.value.join(', ')}
+                {info.value.map((val,idx) => val.lang + (idx+1<info.value.length?', ':''))}
             </span>
     },
     {
@@ -236,7 +259,7 @@ export const workTableColumn = [
     },
     {
         Header:"Unit",
-         Cell:()=><span>Word/Page count</span>
+         Cell:(info)=><span>{info.data[info.row.index].wordCount > 0?'Word/Page Count':"Time"}</span>
     },
     {
         Header:"Value",
@@ -247,5 +270,85 @@ export const workTableColumn = [
         Header:"Word Count",
         accessor:'wordCount',
         Cell:(info) =><span>{info.value > 0 ? info.value:''}</span>
+    }
+]
+
+export const projectDownloadTable = [
+    {
+        Header:"Target Language",
+       
+        Cell:(info)=> <span className='capitalize'>{info.data[info.row.index].lang}</span>
+    },
+    {
+        Header:"Download Status",
+        accessor:"downloadStatus"
+    }
+]
+
+export const invoiceTableColumn = [
+     {
+        Header: 'Sr. No.',
+        accessor: (row, idx) => idx + 1
+    },
+    {
+        Header: 'Department',
+        accessor: 'department',
+        Cell: (info) => <span>{info.value}</span>
+    },
+    {
+        Header:"Date of Creation",
+       accessor:'createdAt',
+        Cell:(info)=> <span className='capitalize'>{dayjs(info.value).format('M/DD/YYYY')}</span>
+    },
+    {
+        Header:"Project Name",
+        accessor:"name"
+    },
+    {
+        Header:"Created By",
+        accessor:'createdBy'
+    },
+    {
+        Header:"Invoices",
+        Cell:(info) => <Link to={`/Admin/Invoice/Generate/${info.data[info?.row?.index].id}`} className='text-blue-500 hover:underline'>Generate</Link>
+    }
+]
+
+export const invoiceFileTableColumn = [
+     {
+        Header: 'Sr. No.',
+        accessor: (row, idx) => idx + 1
+    },
+    {
+        Header: 'File Name',
+        accessor: 'name',
+        Cell: (info) => <span>{info.value}</span>
+    },
+    {
+        Header:"Service Type",
+       accessor:'contentType',
+        Cell:(info)=> <span className='capitalize'>{info.value}</span>
+    },
+    {
+        Header:"Amount",
+        accessor:"amount"
+    }
+]
+
+export const taxDetailTableColumn = [
+     {
+        Header: 'Total Amount',
+       
+    },
+    {
+        Header: 'CGST',
+       
+    },
+    {
+        Header:"SGST",
+      
+    },
+    {
+        Header:"Total After Tax",
     }
 ]

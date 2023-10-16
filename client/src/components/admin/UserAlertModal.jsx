@@ -1,13 +1,13 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
+
 import { updateUser } from '../../redux/reducers/user'
 
 const UserAlertModal = ({open,setOpen,user}) => {
 
   const [loading,setLoading] = useState('')
-
 
   const dispatch = useDispatch()
   const handleSubmit = async(e) =>{
@@ -28,7 +28,7 @@ const UserAlertModal = ({open,setOpen,user}) => {
       } catch (error) {
         setLoading(false)
         setOpen(false)
-        toast.error("Unable to Deactivate User")
+        toast.error(`Unable to ${user.status?'Deactivated':'Activated'} User`)
       }
     }
   }

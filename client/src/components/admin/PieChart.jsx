@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
-import { Chart } from "react-google-charts";
+import { useMemo } from "react";
 import { useSelector } from "react-redux";
+import { Chart } from "react-google-charts";
 
 
 

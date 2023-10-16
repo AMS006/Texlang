@@ -23,7 +23,7 @@ const SelectTargetLanguage = ({ name }) => {
         if (file) {
            let languages = []
            lang.map((val) =>{
-            languages.push(val.value)
+            languages.push({lang:val.value,downloadUrl:''})
            })
            let updatedFile = {...file,targetLanguage:languages}
             setFile(updatedFile)
@@ -34,7 +34,6 @@ const SelectTargetLanguage = ({ name }) => {
     return (
         <Select
             options={languageOptions}
-            // value={languageOptions.find((option) => option.value === selectedLanguage)}
             onChange={(selectedOption) => onChange(selectedOption)}
             styles={languageStyles}
             isMulti={true}

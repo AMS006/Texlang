@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react'
-import Layout from '../../layout'
 import { Link } from 'react-router-dom'
-import {AiOutlinePlus,AiOutlineEye,AiOutlineUserAdd} from 'react-icons/ai'
-import LatestProjectTable from '../../components/admin/Table/LatestProjectTable'
 import { useDispatch } from 'react-redux'
-import { getLatestProjects } from '../../redux/actions/admin/project'
-import { getPieChartData } from '../../redux/actions/admin/work'
+import {AiOutlinePlus,AiOutlineEye,AiOutlineUserAdd} from 'react-icons/ai'
+
+import Layout from '../../layout'
 import PieChart from '../../components/admin/PieChart'
+import { getPieChartData } from '../../redux/actions/admin/work'
+import { getLatestProjects } from '../../redux/actions/admin/project'
+import LatestProjectTable from '../../components/admin/Table/LatestProjectTable'
 
 const Dashboard = () => {
     const dispatch = useDispatch()
@@ -51,7 +52,6 @@ const Dashboard = () => {
                         <AiOutlineEye />
                     </Link>
                 </div>
-                
                 <LatestProjectTable />
             </div>
         </div>

@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
+import { FaBars } from 'react-icons/fa6'
 import { useSelector } from 'react-redux'
 import { BsChevronDown } from 'react-icons/bs'
+
+import UserNavbar from './UserNavbar'
 import ProfileMenu from './ProfileMenu'
-import { FaBars } from 'react-icons/fa6'
 import logo from '../../assets/logo_main.png'
 import AdminNavbar from '../admin/AdminNavbar'
-import UserNavbar from './UserNavbar'
 
 const Topbar = () => {
     const { user } = useSelector((state) => state.user)

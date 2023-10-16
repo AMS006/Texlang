@@ -1,20 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+    userProjects:[],
     loading:false,
     error:undefined,
-    projects: [],
-    selectedProject:undefined,
-    companyProjects: [],
     latestProjects:[],
-    selectedProject:undefined
+    companyProjects: [],
+    invoices:[],
+    selectedProject:undefined,
 }
 
 const projectSlice = createSlice({
     name:"project",
     initialState,
     reducers:{
-        projectRequest:(state,action) =>{
+        projectRequest:(state) =>{
             state.loading = true
             state.error = undefined
             state.selectedProject = undefined
@@ -31,7 +31,7 @@ const projectSlice = createSlice({
         },
         setAllProjects:(state,action) =>{
             state.loading = false
-            state.projects = action.payload
+            state.userProjects = action.payload
             state.error = undefined
         },
         setProject:(state,action) =>{
@@ -39,17 +39,22 @@ const projectSlice = createSlice({
             state.error = undefined
             state.selectedProject = action.payload
         },
+        setInvoices:(state,action) =>{
+            state.loading = false
+            state.invoices = action.payload
+        },
         setError:(state) =>{
             state.loading = false
             state.projects = []
             state.companyProjects = []
             state.latestProjects = []
+            state.invoices = []
             state.selectedProject = undefined
         }
     }
 
 })
 
-export const {projectRequest,setAllProjects,setProject,setCompanyProjects,setLatestProjects,setError} = projectSlice.actions
+export const {projectRequest,setAllProjects,setProject,setCompanyProjects,setInvoices,setLatestProjects,setError} = projectSlice.actions
 
 export default projectSlice.reducer

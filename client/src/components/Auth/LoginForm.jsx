@@ -1,12 +1,12 @@
 import axios from 'axios'
 import toast from 'react-hot-toast'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { LoginUser } from '../../redux/actions/user'
 import { useNavigate } from 'react-router-dom'
-import { clearUser, setForgotPassword } from '../../redux/reducers/user'
 import SignInInput from '../Common/SignInInput'
+import { LoginUser } from '../../redux/actions/user'
+import { clearUser, setForgotPassword } from '../../redux/reducers/user'
 
 const LoginForm = () => {
     const [companyCode, setCompanyCode] = useState('')

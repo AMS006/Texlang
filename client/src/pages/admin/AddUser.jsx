@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
-import Layout from '../../layout'
 import axios from 'axios'
+import * as yup from 'yup'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
 import {useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
-import * as yup from 'yup'
+
+import Layout from '../../layout'
 import Input from '../../components/Common/Input'
 
 const formSchema = yup.object({
@@ -17,7 +18,7 @@ const formSchema = yup.object({
 const AddUser = () => {
     const [loading, setLoading] = useState(false)
     
-    const {handleSubmit , register, formState:{errors}} = useForm({
+    const {handleSubmit , register, formState:{errors}, reset} = useForm({
         resolver:yupResolver(formSchema)
     })
     const formSubmit = async(data) =>{
@@ -31,6 +32,7 @@ const AddUser = () => {
             })
             setLoading(false)
             toast.success("User Created Successfully")
+            reset()
         } catch (error) {
             setLoading(false)
             const message = error.response?.data?.message || "Failed to create User"
@@ -44,7 +46,7 @@ const AddUser = () => {
             <hr />
             <div className='py-4'>
                 <form onSubmit={handleSubmit(formSubmit)} className='flex flex-col gap-3'>
-                   
+
                     <Input 
                         label={'First Name'} 
                         id='firstName' 

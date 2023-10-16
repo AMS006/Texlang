@@ -1,11 +1,12 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt')
 const crypto = require('crypto')
-const { db } = require('../../firebase');
-const generateToken = require('../utils/generateToken');
-const sendEmail = require('../utils/sendEmail');
 const validator = require('validator')
 
-// User Login
+const { db } = require('../../firebase');
+const sendEmail = require('../utils/sendEmail');
+const generateToken = require('../utils/generateToken');
+
+
 exports.loginUser = async(req,res) =>{
     try {
         const {email,password,code} = req.body;
@@ -25,14 +26,13 @@ exports.loginUser = async(req,res) =>{
         if(!userData.status){
             return res.status(400).json({message:"Email Id Deactivated"})
         }
+       
         const userId = userSnapshot.docs[0].id;
 
-        // To Verify Code
         const codeMatch = userData?.verificationCode == code;
         if(!codeMatch)
             return res.status(400).json({message:"Invalid Verification Code"})
 
-        // To verify password
         const passwordMatch = await bcrypt.compare(password, userData?.password);
         if(!passwordMatch)
             return res.status(400).json({message:"Invalid Credentials"})
@@ -71,7 +71,7 @@ exports.sendCode = async(req,res) =>{
         }
         const userDoc = userSnapshot.docs[0]
         const userData = userDoc.data()
-         if(!userData.status){
+        if(!userData.status){
             return res.status(400).json({message:"Email Id Deactivated"})
         }
         const code =  crypto.randomInt(0,1000000000)
@@ -98,6 +98,7 @@ exports.getUser = async(req,res) =>{
       return res.status(500).json({ message: "Something went wrong" });
     }
 }
+
 exports.changePassword = async(req,res) =>{
     try {
         const user = req.user
@@ -124,6 +125,7 @@ exports.changePassword = async(req,res) =>{
       return res.status(500).json({ message: "Something went wrong" });
     }
 }
+
 exports.forgotPassword = async(req,res) =>{
     try {
         const {email} = req.body
@@ -169,5 +171,15 @@ exports.resetPassword = async(req,res) =>{
     } catch (error) {
         console.log("Update-Password: ", error.message)
         return res.status(500).json({message:"Something went wrong"})
+    }
+}
+
+exports.logoutUser = (req,res) =>{
+     try {
+        res.cookie('token', '', { maxAge: 0,sameSite:"none", httpOnly: true });
+        return res.status(200).json({ message: 'Logged out successfully' });
+    } catch (error) {
+        console.log("Logout : ",error.message)
+      return res.status(500).json({ message: "Something went wrong" });
     }
 }

@@ -1,11 +1,12 @@
-import React, { useMemo } from 'react'
-import { useTable } from 'react-table';
+import  { useMemo } from 'react'
 import { useSelector } from 'react-redux';
-import {  latestProjectColumn } from '../../data';
+import { useTable } from 'react-table';
 
-const LatestProjectTable = () => {
-    const { latestProjects , loading } = useSelector((state) => state.project)
-    const data = useMemo(() => latestProjects,[latestProjects])
+import { invoiceTableColumn } from '../../data';
+
+const InvoicesTable = () => {
+    const { invoices , loading } = useSelector((state) => state.project)
+    const data = useMemo(() => invoices,[invoices])
     const {
         getTableProps,
         getTableBodyProps,
@@ -14,7 +15,7 @@ const LatestProjectTable = () => {
         prepareRow,
     } = useTable(
         {
-            columns: latestProjectColumn,
+            columns: invoiceTableColumn,
             data,
         },
     );
@@ -29,6 +30,7 @@ const LatestProjectTable = () => {
                                         {...column.getHeaderProps()}
                                     >
                                         {column.render('Header')}
+                                        
                                     </th>
                                 ))}
                             </tr>
@@ -52,7 +54,7 @@ const LatestProjectTable = () => {
                     ) : (
                         <tbody>
                             <tr>
-                                <td colSpan={latestProjectColumn.length} className="text-center py-1.5 border w-full">
+                                <td colSpan={invoiceTableColumn.length} className="text-center py-1.5 border w-full">
                                     {loading ? 'Loading...' : 'No Records Found'}
                                 </td>
                             </tr>
@@ -63,4 +65,4 @@ const LatestProjectTable = () => {
   )
 }
 
-export default LatestProjectTable
+export default InvoicesTable

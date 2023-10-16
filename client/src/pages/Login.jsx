@@ -1,10 +1,11 @@
 import React from 'react'
-import logo from '../assets/logo_main.png'
-import bg1 from '../assets/bg1.jpg'
-import LoginForm from '../components/Auth/LoginForm'
-import ForgetPassword from '../components/Auth/ForgetPassword'
 import { useSelector } from 'react-redux'
+
+import bg1 from '../assets/bg1.jpg'
+import logo from '../assets/logo_main.png'
+import LoginForm from '../components/Auth/LoginForm'
 import ResetPassword from '../components/Auth/ResetPassword'
+import ForgetPassword from '../components/Auth/ForgetPassword'
 
 const LoginPage = () => {
     const { forgotPassword, changePassword } = useSelector((state) => state.user)

@@ -11,8 +11,9 @@ const workSlice = createSlice({
     name: "word",
     initialState,
     reducers: {
-        workRequest: (state, action) => {
+        workRequest: (state) => {
             state.loading = true
+            state.works = []
         },
         setWorks: (state, action) => {
             state.loading = false

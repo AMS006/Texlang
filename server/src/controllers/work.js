@@ -1,11 +1,9 @@
-const { bucket } = require('../../firebase');
-const {filesize} = require('filesize')
-const textract = require('textract')
-const PDFParser = require('pdf-parse');
 const xlsx = require('xlsx');
-const WordExtractor = require('word-extractor')
-
-
+const textract = require('textract')
+const {filesize} = require('filesize')
+const PDFParser = require('pdf-parse')
+const WordExtractor = require('word-extractor');
+const { db } = require('../../firebase');
 
 const countWords = async(file) =>{
     if (file.mimetype === 'application/pdf') {
@@ -13,7 +11,7 @@ const countWords = async(file) =>{
             const pdfData = await PDFParser(file.buffer);
             const text = pdfData.text;
             const wordCount = text.split(/\s+/).length;
-           
+            
             return wordCount;
        } catch (error) {
             console.log("An Error Occured",error?.message)
@@ -26,6 +24,7 @@ const countWords = async(file) =>{
             const extracted = await extractor.extract(file.buffer);
             const text = extracted.getBody()
             const wordCount = text.split(/\s+/).length;
+           
             return wordCount;
         } catch (error) {
             console.log("An Error Occured",error?.message)
@@ -65,6 +64,10 @@ const countWords = async(file) =>{
 exports.uploadWork = async(req,res) =>{
     try {
         const file = req.file;
+        const user = req.user;
+        if(!user){
+            return res.status(401).json({message:"Unauthorized"})
+        }
         if (!file) {
             return res.status(400).send('No file uploaded');
         }
@@ -80,22 +83,7 @@ exports.uploadWork = async(req,res) =>{
         else{
             wordCount = await countWords(file)
         }
-        // console.log(value)
-        const remoteFileName = `works/${req.body.name}`;
-        // const fileUpload = bucket.file(remoteFileName);
-
-        // const blobStream = fileUpload.createWriteStream({
-        // metadata: {
-        //     contentType: file.mimetype,
-        // },
-        // });
-
-        // blobStream.on('error', (error) => {
-        // console.error('Error uploading file:', error?.message);
-        // res.status(500).send('File upload error.');
-        // });
-
-        // blobStream.on('finish', async() => {
+        const remoteFileName = `${user.id}_${req.body.name}`;
 
  
         const fileName = file.originalname;
@@ -114,11 +102,74 @@ exports.uploadWork = async(req,res) =>{
                 targetLanguage:[],
                 contentType:"translation"
             });
-        // });
 
-        // blobStream.end(file.buffer);
     } catch (error) {
         console.log("Upload Work : ", error.message)
+        return res.status(500).json({message:"Something went wrong"})
+    }
+}
+exports.getWorksData = (works,projectId,projectName) =>{
+  
+    const worksData = []
+    works.forEach( (work) => {
+        let cost = 0;
+        if(Number(work?.wordCount) > 0){
+            cost = (Number(work.wordCount) * 2.2) * work.targetLanguage?.length;
+        }
+        else if(Number(work?.value)){
+            cost = (Number(work.value) * 1.5) * work.targetLanguage?.length
+        }
+        
+        worksData.push({
+            ...work,
+            cost:Number(cost),
+            projectId,
+            projectName:projectName,
+            approvalStatus:"Yes",
+            currentStatus:"In Progress"
+        })
+    })
+
+    return worksData
+}
+exports.formatJobWiseData = (works) =>{
+    const jobWiseData = {}
+
+    works.forEach((work) =>{
+        if(jobWiseData.hasOwnProperty(work.contentType)){
+            jobWiseData[work.contentType] += 1;
+        }else{
+            jobWiseData[work.contentType] = 1;
+        }
+    })
+    return jobWiseData;
+}
+exports.addComment = async(req,res) =>{
+    try {
+        const {id} = req.params
+        const {comment} = req.body
+        if(!comment || comment.length === 0)
+            return res.status(400).json({message:'Invalid Request'})
+        if(!id)
+            return res.status(400).json({message:"Invalid Request"})
+
+        const workRef =  db.collection('works').doc(id)
+
+        const workData = (await workRef.get()).data()
+
+        let comments = []
+        if(workData?.comments && workData?.comments?.length>0){
+            comments = [...workData.comments,comment]
+        }else{
+            comments = [comment]
+        }
+
+        await workRef.update({comments})
+
+        return res.status(200).json({message:"Comment Added"})
+        
+    } catch (error) {
+         console.log("Add Comment : ", error.message)
         return res.status(500).json({message:"Something went wrong"})
     }
 }

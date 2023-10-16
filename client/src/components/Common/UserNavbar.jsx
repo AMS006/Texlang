@@ -1,6 +1,5 @@
-import React from 'react'
-import { MdOutlineDiamond } from 'react-icons/md'
 import { SlPuzzle } from 'react-icons/sl'
+import { MdOutlineDiamond } from 'react-icons/md'
 import { Link, useLocation } from 'react-router-dom'
 
 const UserNavbar = () => {

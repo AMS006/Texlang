@@ -5,8 +5,8 @@ const firebaseConfig = {
   authDomain: "texlang.firebaseapp.com",
   projectId: "texlang",
   storageBucket: "texlang.appspot.com",
-  messagingSenderId: "260649366332",
-  appId: "1:260649366332:web:5bb97e7990c069b4456439",
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGE_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_MESSAGE_SENDER_ID,
   measurementId: "G-NXHSBLCVCY"
 };
 export const app = initializeApp(firebaseConfig);

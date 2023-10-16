@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt')
-const admin = require('firebase-admin')
-const { db } = require("../../../firebase");
 const validator = require('validator')
+const admin = require('firebase-admin')
 
-// User Registration
+const { db } = require("../../../firebase")
+
 exports.registerUser = async(req,res) =>{
     try {
         const {firstName,lastName,email,password} = req.body
@@ -47,7 +47,10 @@ exports.getAllUser = async (req, res) => {
                 firstName: user?.firstName,
                 lastName:user?.lastName,
                 role:user.role,
-                status:user.status
+                status:user.status,
+                email: user?.email,
+                billedAmount:user?.totalBilledAmount
+
             }
         })
 

@@ -1,11 +1,11 @@
+import axios from 'axios';
 import { filesize } from 'filesize'
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useEffect, useRef, useState } from 'react';
 import { deleteObject, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 
 import { app } from '../../firebase';
 import { setClearFile, setFilesData } from '../../redux/reducers/file';
-import axios from 'axios';
 
 const UploadFiles = () => {
 
@@ -65,13 +65,13 @@ const UploadFiles = () => {
     };
     const calculateDuration = (file,type) =>{
         return new Promise((resolve, reject) => {
-            const mediaElement = document.createElement(type); // type = 'audio' or 'video'
+            const mediaElement = document.createElement(type); 
             mediaElement.src = URL.createObjectURL(file);
 
             mediaElement.onloadedmetadata = () => {
                 const duration = mediaElement.duration;
                 URL.revokeObjectURL(mediaElement.src);
-                resolve(duration); // Resolve the Promise with the duration.
+                resolve(duration);
             };
         });
 
@@ -87,7 +87,6 @@ const UploadFiles = () => {
             if(file.type.startsWith('video')){
                 const value = await calculateDuration(file,'video');
                 form.append('value',value)
-                console.log(value)
             }
             else if(file.type.startsWith('audio')){
                 const value = await calculateDuration(file,'audio')
@@ -228,7 +227,7 @@ const UploadFiles = () => {
             </div>
             <div className='flex gap-2.5 flex-wrap items-start justify-start'>
                 {files &&
-                    files.map((file) => (
+                    files.map((file,idx) => (
                         <div className='flex flex-col justify-between gap-1  border border-black w-36 h-44 p-1 rounded shadow' key={file.name}>
                             <p className='bg-gray-300 p-1 h-1/2 break-words overflow-y-auto custom-scrollbar'>{file.name}</p>
                             {canceledUpload[file.name] ?
@@ -249,7 +248,7 @@ const UploadFiles = () => {
                                 )}
                             <div className='flex flex-col gap-0.5'>
                                 <p className='font-semibold px-0.5'>{fileSize[file.name]}</p>
-                                {progressFiles[file.name] && (progressFiles[file.name] < 100 || !uploadedFiles[file.name]) ? <button className='bg-blue-500 text-white w-full text-sm font-semibold rounded px-1 py-0.5' onClick={(e) => {
+                                {idx === currentFileIndex ? <button className='bg-blue-500 text-white w-full text-sm font-semibold rounded px-1 py-0.5' onClick={(e) => {
                                     e.preventDefault()
                                     handleCancelUpload(file)
                                 }}>Cancel Upload</button> :

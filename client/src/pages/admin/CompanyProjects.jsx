@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
-import Layout from '../../layout'
-import CompanyProjectsTable from '../../components/admin/Table/CompanyProjectsTable'
 import { useDispatch } from 'react-redux'
+
+import Layout from '../../layout'
 import { getCompanyProjects } from '../../redux/actions/admin/project'
+import CompanyProjectsTable from '../../components/admin/Table/CompanyProjectsTable'
 
 const CompanyProjects = () => {
     const dispatch = useDispatch()

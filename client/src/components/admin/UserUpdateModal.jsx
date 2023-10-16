@@ -1,7 +1,8 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
+import  { useEffect, useState } from 'react'
+
 import { updateUser } from '../../redux/reducers/user'
 
 const UserUpdateModal = ({open,setOpen,user}) => {

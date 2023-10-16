@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
-import UploadFiles from './UploadFiles'
-import DisplayTable from '../Table/DisplayTable'
-import { useDispatch, useSelector } from 'react-redux'
-import toast from 'react-hot-toast'
 import axios from 'axios'
-import { setClearFile } from '../../redux/reducers/file'
 import * as yup from 'yup'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
 import {useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
+import { useDispatch, useSelector } from 'react-redux'
+
 import Input from '../Common/Input'
+import UploadFiles from './UploadFiles'
+import DisplayTable from '../Table/DisplayTable'
+import { setClearFile } from '../../redux/reducers/file'
 
 const formSchema =  yup.object({
     name:yup.string().required("Project Name is Required"),
@@ -49,11 +50,12 @@ const AddProjectForm = () => {
         let totalCost = 0;
         files.forEach((work) =>{
             if(Number(work.wordCount) > 0){
-                totalCost += (work.wordCount * 2.2);
+                totalCost += (Number(work.wordCount) * 2.2) * work.targetLanguage?.length;
             }
             else if(Number(work.value)){
-                totalCost += (work.value * 1.5)
+                totalCost += (Number(work.value) * 1.5) * work.targetLanguage?.length
             }
+            
         })
         try {
              await axios({

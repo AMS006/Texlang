@@ -64,7 +64,6 @@ const ServerUploadFiles = () => {
 
     }
     const handleUpload = async (file) => {
-        console.log(file)
         const form = new FormData();
         form.append('file', file);
         form.append('name', file.name);
@@ -88,7 +87,6 @@ const ServerUploadFiles = () => {
                 onUploadProgress: (progressEvent) => {
                 if (source.token.reason) {
                     
-                    console.log('Request Canceled By User');
                 } else {
                     const percentCompleted = (progressEvent.loaded / progressEvent.total) * 100;
                     setProgress(Math.ceil(percentCompleted));
@@ -96,7 +94,6 @@ const ServerUploadFiles = () => {
                 },
                 cancelToken: source.token,
             });
-            console.log(res.data)
             setUploadedFilesData((prev) => [...prev,res.data]);
             setUploadedFiles((prev) => ({...prev,[files[currentFileIndex].name]:true}))
             setProgress(0);

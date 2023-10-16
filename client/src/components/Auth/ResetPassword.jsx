@@ -1,12 +1,13 @@
 import axios from 'axios'
-import React, { useState } from 'react'
+import * as yup from 'yup'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useDispatch, useSelector } from 'react-redux'
-import { setChangePassword, setForgotPassword } from '../../redux/reducers/user'
 import {useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
-import * as yup from 'yup'
+import { useDispatch, useSelector } from 'react-redux'
+
 import Input from '../Common/Input'
+import { setChangePassword, setForgotPassword } from '../../redux/reducers/user'
 
 const formSchema = yup.object({
     code:yup.string().required("Verification code is Required"),
