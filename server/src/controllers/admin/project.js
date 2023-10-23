@@ -7,29 +7,33 @@ exports.getAllProjects = async (req, res) => {
 
         const projectCollection = db.collection('projects');
 
-        let projectQuery = projectCollection.orderBy('createdAt','desc');
+        let projectQuery = projectCollection.where('companyId','==',user?.companyId).orderBy('createdAt','desc');
 
         const projectsData = await projectQuery.get();
 
         const projects = projectsData.docs.map((item) => {
             const id = item.id
-            const data = item.data();
-            const timestamp = {
-                seconds: data.createdAt._seconds,
-                nanoseconds: data.createdAt._nanoseconds
-            };
+            const projectDoc = item.data();
 
-            const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-            const end_date = new Date(date);
-            end_date.setDate(end_date.getDate() + 2);
+            const start_date_timestamp = {
+                seconds: projectDoc.createdAt._seconds,
+                nanoseconds: projectDoc.createdAt._nanoseconds
+            };
+            const end_date_timestamp = {
+                seconds: projectDoc.end_date._seconds,
+                nanoseconds: projectDoc.end_date._nanoseconds
+            }
+
+            const start_date = new Date(start_date_timestamp.seconds * 1000 + start_date_timestamp.nanoseconds / 1000000);
+            const end_date = new Date(end_date_timestamp.seconds * 1000 + end_date_timestamp.nanoseconds / 1000000);
 
             return {
                 id,
-                name: data.name,
-                customer: data?.user?.email,
-                start_date: date,
-                end_date: end_date,
-                status: data.status
+                name: projectDoc.name,
+                customer: projectDoc?.user?.email,
+                start_date,
+                end_date,
+                status: projectDoc.status
             };
         });
         return res.status(200).json({ projects });
@@ -46,7 +50,7 @@ exports.getLatestProject = async (req, res) => {
 
         const projectCollection = db.collection('projects');
 
-        let projectQuery = projectCollection.orderBy('createdAt','desc').limit(5);
+        let projectQuery = projectCollection.where('companyId','==',user?.companyId).orderBy('createdAt','desc').limit(5);
 
         const projectsData = await projectQuery.get();
 
@@ -117,7 +121,11 @@ exports.getProjectDetailsAdmin = async(req,res) =>{
 
 exports.getProjectInvoices = async(req,res) =>{
     try {
-        const projectRef = db.collection('projects').where('status','==','Completed')
+        const user = req.user
+        if (!user)
+            return res.status(401).json({ message: "Unauthorized" })
+        
+        const projectRef = db.collection('projects').where('companyId','==',user?.companyId).where('status','==','Completed')
 
         const projectData = (await projectRef.get()).docs;
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import {AiOutlinePlus,AiOutlineEye,AiOutlineUserAdd} from 'react-icons/ai'
+import { AiOutlinePlus, AiOutlineEye, AiOutlineUserAdd } from 'react-icons/ai'
 
 import Layout from '../../layout'
 import PieChart from '../../components/admin/PieChart'
@@ -15,7 +15,7 @@ const Dashboard = () => {
         dispatch(getLatestProjects())
         dispatch(getPieChartData())
     }, [dispatch])
-    
+
     return (
         <div className='px-6 py-8'>
             <h1 className='text-2xl font-sans pb-2.5'>Admin Dashboard</h1>
@@ -29,7 +29,7 @@ const Dashboard = () => {
                     <AiOutlineEye size={24} />
                     <span className='font-semibold'>View Status</span>
                 </Link>
-                 <Link to={'/admin/CompanyProjects'} className='bg-[#32c5d2] text-white flex flex-col gap-2.5 items-center justify-center  rounded h-32 w-full border'>
+                <Link to={'/admin/CompanyProjects'} className='bg-[#32c5d2] text-white flex flex-col gap-2.5 items-center justify-center  rounded h-32 w-full border'>
                     <AiOutlineEye size={24} />
                     <span className='font-semibold'>View Projects</span>
                 </Link>

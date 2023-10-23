@@ -1,9 +1,9 @@
 import Select from 'react-select';
 import React, { useEffect, useState } from 'react';
 
-import { contentStyles, contentType } from '../data';
 import { updateFile } from '../../redux/reducers/file';
 import { useDispatch, useSelector } from 'react-redux';
+import { contentStyles, contentType } from '../data/selectOptions';
 
 
 
@@ -18,7 +18,7 @@ const SelectContentType = ({ name }) => {
             let flleData = files.find((data) => data.name === name)
             setFile(flleData)
         }
-    }, [files,name])
+    }, [files, name])
     const onChange = (type) => {
         if (file) {
             const updatedFile = { ...file, contentType: type }
@@ -33,7 +33,7 @@ const SelectContentType = ({ name }) => {
             value={contentType.find((option) => option.value === selectedContent)}
             onChange={(selectedOption) => onChange(selectedOption.value)}
             styles={contentStyles}
-           
+
         />
     );
 };

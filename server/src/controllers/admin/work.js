@@ -35,7 +35,7 @@ exports.getWorks = async(req, res) => {
 exports.getInvoiceWorks = async(req, res) => {
     try {
         const { projectId } = req.params    
-        console.log(projectId)
+        
         if (!projectId)
             return res.status(404).json({ message: "Invalid Request" })
         
@@ -63,12 +63,13 @@ exports.getInvoiceWorks = async(req, res) => {
 }
 exports.getJobWiseData = async(req,res) =>{
     try {
-        const jobWiseDataRef =  db.collection('metadata').doc('jobWiseData')
+        const user = req.user;
+
+        const jobWiseDataRef =  db.collection('metadata').doc(`${user?.companyId.split(' ').join('_')}_jobWiseData`)
         const jobWiseData = await jobWiseDataRef.get();
 
         if(!jobWiseData.exists)
             return res.status(404).json({message:"No Jobs Found"})
-
 
         const jobs = jobWiseData.data()
         

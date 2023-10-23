@@ -11,9 +11,10 @@ const AdminRoute = () => {
     if (!user) {
         return <Navigate to="/" />;
     }
-    if (user.role === 'user')
-        return <Navigate to='/' />
-    return <Outlet />;
+    if (user.role === 'admin')
+        return <Outlet />
+
+    return <Navigate />;
 }
 
 export default AdminRoute

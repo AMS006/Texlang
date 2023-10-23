@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 
-async function sendEmail(email,code) {
+async function sendEmail(email,html) {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
@@ -15,10 +15,7 @@ async function sendEmail(email,code) {
       from: process.env.AUTH_EMAIL,
       to: email,
       subject:"Security code for login process",
-      html:
-        `<p>Dear Customer, <br />
-
-        The Security code for your login process is: ${code}`,
+      html
     };
     await transporter.sendMail(options);
   } catch (error) {

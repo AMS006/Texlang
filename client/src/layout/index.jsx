@@ -9,7 +9,7 @@ const Layout = (Component) => ({ ...props }) => {
             <Topbar />
             <div className='w-full lg:pl-64'>
                 <Component {...props} />
-            </div>         
+            </div>
         </main>
     )
 }

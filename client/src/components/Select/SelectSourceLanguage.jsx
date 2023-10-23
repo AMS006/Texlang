@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { updateFile } from '../../redux/reducers/file';
-import { languageOptions, languageStyles } from '../data';
+import { languageOptions, languageStyles } from '../data/selectOptions';
 
 const SelectSourceLanguage = ({ name }) => {
     const { files } = useSelector((state) => state.file)
@@ -16,7 +16,7 @@ const SelectSourceLanguage = ({ name }) => {
             let flleData = files.find((data) => data.name === name)
             setFile(flleData)
         }
-    }, [files,name])
+    }, [files, name])
     const onChange = (lang) => {
         if (file) {
             const updatedFile = { ...file, sourceLanguage: lang }

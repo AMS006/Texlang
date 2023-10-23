@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import { useTable } from 'react-table';
 
-import { projectDownloadTable } from '../data'
 import './table.css'
+import { projectDownloadTable } from '../data/tableColumns';
 
-const ProjectDownloadTable = ({targetLanguage}) => {
+const ProjectDownloadTable = ({ targetLanguage }) => {
     const data = useMemo(() => targetLanguage, [targetLanguage])
     const {
         getTableProps,
@@ -26,7 +26,7 @@ const ProjectDownloadTable = ({targetLanguage}) => {
                     {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map((column) => (
-                                <th {...column.getHeaderProps()} style={{maxWidth:'3rem'}}>
+                                <th {...column.getHeaderProps()} style={{ maxWidth: '3rem' }}>
                                     {column.render('Header')}
                                 </th>
                             ))}

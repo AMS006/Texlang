@@ -1,52 +1,14 @@
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
 import { Link } from "react-router-dom";
-import SelectContentType from "./Select/SelectContentType";
-import SelectSourceLanguage from "./Select/SelectSourceLanguage";
-import SelectTargetLanguage from "./Select/SelectTargetLanguage";
-import UserEditButton from './admin/UserEditButton';
-import UserDeactivateButton from './admin/UserDeactivateButton';
 
-export const contentType = [
-    { value: 'translation', label: 'Translation' },
-    { value: 'video', label: 'Video(Translation + Editing)' },
-    { value: 'subtitling', label: 'Subtitling' },
-    { value: 'dubbing', label: 'Dubbing/Voice-Over' },
-    { value: 'brochure', label: 'Brochure' },
-    { value: 'banner', label: 'Banner' }
-];
-export const languageOptions = [
-    { value: 'english', label: 'English' },
-    { value: 'spanish', label: 'Spanish' },
-    { value: 'french', label: 'French' },
-    { value: 'german', label: 'German' },
-    { value: 'hindi', label: 'Hindi'},
-    { value: 'marathi', label:'Marathi'},
-    { value: 'urdu', label:'Urdu'},
-    { value: 'malyalam', label: 'Malyalam'}
-];
-export const languageStyles = {
-    control: (provided) => ({
-        ...provided,
-    }),
-    menu: (provided) => ({
-        ...provided,
-        position: 'absolute',
-        top: -320, 
-        zIndex: 1000,
-        
-    }),
-};
-export const contentStyles = {
-    control: (provided) => ({
-        ...provided,
-    }),
-    menu: (provided) => ({
-        ...provided,
-        position: 'absolute',
-        top: -280, 
-        zIndex: 1000,
-    }),
-};
+import UserEditButton from "../admin/UserEditButton";
+import StatusFilter from "../Common/Filters/StatusFilter";
+import EndDateFilter from "../Common/Filters/EndDateFilter";
+import SelectContentType from "../Select/SelectContentType";
+import StartDateFilter from "../Common/Filters/StartDateFilter";
+import UserDeactivateButton from "../admin/UserDeactivateButton";
+import SelectSourceLanguage from "../Select/SelectSourceLanguage";
+import SelectTargetLanguage from "../Select/SelectTargetLanguage";
 
 export const displayTableColumns = [
     {
@@ -142,12 +104,12 @@ export const companyProjectListTableColumns = [
     {
         Header: 'End Data',
         accessor: 'end_date',
-        Cell: info => <span className="text-sm py-1 px-1.5 bg-[#f1c40f] text-white">{dayjs(info.value).format("DD/MM/YYYY")}</span>
+        Cell: info => <span className={`text-sm py-1 px-1.5 ${info.data[info.row.index]?.status==='Completed'?'bg-blue-500':'bg-yellow-500'} text-white`}>{dayjs(info.value).format("DD/MM/YYYY")}</span>
     },
     {
         Header:'Status',
         accessor:'status',
-        Cell: info => <span className="bg-red-500 py-1 px-1.5 text-sm text-white ">{info.value}</span>
+        Cell: info => <span className={`${info.value==='Completed'?'bg-blue-500':'bg-red-500'} py-1 px-1.5 text-sm text-white `}>{info.value}</span>
     }
 ]
 export const latestProjectColumn = [
@@ -168,12 +130,12 @@ export const latestProjectColumn = [
     {
         Header: 'End Data',
         accessor: 'end_date',
-        Cell: info => <span className="text-sm py-1 px-1.5 bg-[#f1c40f] text-white">{dayjs(info.value).format("DD/MM/YYYY")}</span>
+        Cell: info => <span className={`text-sm py-1 px-1.5 ${info.data[info.row.index]?.status==='Completed'?'bg-blue-500':'bg-yellow-500'} text-white`}>{dayjs(info.value).format("DD/MM/YYYY")}</span>
     },
     {
         Header:'Status',
         accessor:'status',
-        Cell: info => <span className="bg-red-500 py-1 px-1.5 text-sm text-white ">{info.value}</span>
+        Cell: info => <span className={`${info.value==='Completed'?'bg-blue-500':'bg-red-500'} py-1 px-1.5 text-sm text-white `}>{info.value}</span>
     }
 ]
 
@@ -220,12 +182,12 @@ export const userUsageTable = [
     {
         Header: 'E-mail',
         accessor: 'email',
-        Cell: (info) => <span className="text-sm">{info.value}</span>
+        Cell: (info) => <span >{info.value}</span>
     },
     {
         Header: 'Total Billed Amount(₹)',
         accessor: 'billedAmount',
-        Cell: (info) => <span className="text-sm">{Number(info.value).toFixed(2)}</span>
+        Cell: (info) => <span >{Number(info.value).toFixed(2)}</span>
     },
    
 ]
@@ -249,7 +211,7 @@ export const workTableColumn = [
         accessor: 'targetLanguage',
         Cell: info => 
             <span className='capitalize'>
-                {info.value.map((val,idx) => val.lang + (idx+1<info.value.length?', ':''))}
+                {info.value?.map((val,idx) => val.lang + (idx+1<info.value.length?', ':''))}
             </span>
     },
     {
@@ -350,5 +312,51 @@ export const taxDetailTableColumn = [
     },
     {
         Header:"Total After Tax",
+    }
+]
+
+export const generateReportsTableColumn = [
+    {
+        Header: 'Sr. No.',
+        accessor: (row, idx) => idx + 1,
+        Filter: StartDateFilter,
+        disableFilters:true
+    },
+    {
+        Header: 'Project Title',
+        accessor: 'name',
+        Cell: (info) => {
+            return <Link className="text-blue-500 hover:underline" to={`/Admin/ProjectDetails/${info.data[info.row.index].id}`}>{info.value}</Link>
+
+        },
+        Filter: StartDateFilter,
+        disableFilters:true
+    },
+    {
+        Header: 'Customer',
+        accessor: 'customer',
+         Filter: StartDateFilter,
+        disableFilters:true
+       
+    },
+    {
+        Header: 'Start Date',
+        accessor: 'start_date',
+        Cell: (info) => <span className="text-sm">{dayjs(info.value).format("DD/MM/YYYY")}</span>,
+        Filter: StartDateFilter,
+       
+    },
+    {
+        Header: 'End Data',
+        accessor: 'end_date',
+        Cell: info => <span className={`text-sm py-1 px-1.5 ${info.data[info.row.index]?.status==='Completed'?'bg-blue-500':'bg-yellow-500'} text-white`}>{dayjs(info.value).format("DD/MM/YYYY")}</span>,
+        Filter: EndDateFilter,
+       
+    },
+    {
+        Header:'Status',
+        accessor:'status',
+        Cell: info => <span className={`${info.value==='Completed'?'bg-blue-500':'bg-red-500'} py-1 px-1.5 text-sm text-white `}>{info.value}</span>,
+         Filter: StatusFilter,
     }
 ]

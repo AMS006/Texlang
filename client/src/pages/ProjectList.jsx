@@ -9,7 +9,7 @@ const ProjectList = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        dispatch(getProjects(2,1,''))
+        dispatch(getProjects(2, 1, ''))
     }, [dispatch])
 
     return (

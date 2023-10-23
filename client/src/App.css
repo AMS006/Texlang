@@ -11,6 +11,26 @@
   background: #747474;
 }
 
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
+
+/* styles.css */
+/* Initially, set the height to 0 and hide overflow */
+.expandable-section {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease-in-out;
+}
+
+.expandable-section.open {
+  height: auto;
+  overflow: visible;
+}
+
+a.active,a.active:hover{
+  background-color:#3b82f6;
+}
+
+

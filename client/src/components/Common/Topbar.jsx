@@ -30,7 +30,7 @@ const Topbar = () => {
                 </div>
             </div>
             <div className={`lg:h-0 sticky   bg-[#364150] text-white w-full transition-all duration-200 ease-linear z-20 overflow-hidden ${drawerOpen ? 'h-auto lg:p-0 p-4 top-12' : 'h-0 top-0'}`}>
-                {user && user?.role === 'admin'?<AdminNavbar />:<UserNavbar />}
+                {user && user?.role === 'admin' ? <AdminNavbar /> : <UserNavbar />}
             </div>
         </>
     )

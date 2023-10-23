@@ -2,8 +2,8 @@ import axios from 'axios'
 import * as yup from 'yup'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import {useForm} from 'react-hook-form'
-import {yupResolver} from '@hookform/resolvers/yup'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Input from '../Common/Input'
@@ -11,8 +11,8 @@ import UploadFiles from './UploadFiles'
 import DisplayTable from '../Table/DisplayTable'
 import { setClearFile } from '../../redux/reducers/file'
 
-const formSchema =  yup.object({
-    name:yup.string().required("Project Name is Required"),
+const formSchema = yup.object({
+    name: yup.string().required("Project Name is Required"),
     department: yup.string().required("Project Department is Required"),
     description: yup.string().optional()
 })
@@ -20,18 +20,18 @@ const formSchema =  yup.object({
 const AddProjectForm = () => {
 
     const [loading, setLoading] = useState(false)
-    
-    const {handleSubmit,register,reset,formState:{errors}} = useForm({
-        resolver:yupResolver(formSchema)
+
+    const { handleSubmit, register, reset, formState: { errors } } = useForm({
+        resolver: yupResolver(formSchema)
     })
-    
+
     const { files } = useSelector((state) => state.file)
     const dispatch = useDispatch()
 
-    const isValidWork = () =>{
+    const isValidWork = () => {
         for (let i = 0; i < files.length; i++) {
             const file = files[i]
-            if (!file?.sourceLanguage || file.targetLanguage?.length == 0 || !file?.contentType) {
+            if (!file?.sourceLanguage || file.targetLanguage?.length === 0 || !file?.contentType) {
 
                 return false;
             }
@@ -39,30 +39,30 @@ const AddProjectForm = () => {
         return true;
     }
 
-    const formSubmit = async(data) =>{
-         if (files.length == 0) {
+    const formSubmit = async (data) => {
+        if (files.length === 0) {
             return toast.error("Plzz Upload Work")
         }
-        if(!files || !isValidWork()){
+        if (!files || !isValidWork()) {
             return toast.error("Plzz select all Fields")
         }
         setLoading(true)
         let totalCost = 0;
-        files.forEach((work) =>{
-            if(Number(work.wordCount) > 0){
+        files.forEach((work) => {
+            if (Number(work.wordCount) > 0) {
                 totalCost += (Number(work.wordCount) * 2.2) * work.targetLanguage?.length;
             }
-            else if(Number(work.value)){
+            else if (Number(work.value)) {
                 totalCost += (Number(work.value) * 1.5) * work.targetLanguage?.length
             }
-            
+
         })
         try {
-             await axios({
+            await axios({
                 method: "POST",
                 url: "http://localhost:4000/api/project",
-                data:{...data,totalCost,works:files},
-                withCredentials:true
+                data: { ...data, totalCost, works: files },
+                withCredentials: true
             })
             toast.success("Project Added")
             setLoading(false)
@@ -80,15 +80,15 @@ const AddProjectForm = () => {
             <form className='flex flex-col gap-6' onSubmit={handleSubmit(formSubmit)}>
                 <div className='flex lg:flex-row flex-col lg:items-center lg:gap-4 gap-0.5 w-full'>
                     <label htmlFor="name" className='lg:w-40 text-sm'>Project Name <span className='text-red-500'>*</span></label>
-                    <Input type="text" id="name"  placeholder='Enter Project Name' errorMessage={errors?.name?.message} register={{...register('name')}} />
+                    <Input type="text" id="name" placeholder='Enter Project Name' errorMessage={errors?.name?.message} register={{ ...register('name') }} />
                 </div>
                 <div className='flex lg:flex-row flex-col lg:items-center lg:gap-4 gap-0.5 w-full'>
                     <label htmlFor="department" className='lg:w-40 text-sm'>Department Name <span className='text-red-500'>*</span></label>
-                    <Input type="text"  id="department" placeholder='Enter Department Name' errorMessage={errors?.department?.message} register={{...register('department')}} />
+                    <Input type="text" id="department" placeholder='Enter Department Name' errorMessage={errors?.department?.message} register={{ ...register('department') }} />
                 </div>
                 <div className='flex lg:flex-row flex-col  lg:gap-4 gap-0.5 w-full'>
                     <label htmlFor="description" className='lg:w-40 text-sm'>Project Description</label>
-                    <textarea id="description" rows={3} register={{...register('description')}} placeholder='Enter Project Description' className='w-full border border-gray-400 py-1.5 px-2.5 focus:outline-blue-500' />
+                    <textarea id="description" rows={3} register={{ ...register('description') }} placeholder='Enter Project Description' className='w-full border border-gray-400 py-1.5 px-2.5 focus:outline-blue-500' />
                 </div>
                 <div className='flex lg:flex-row flex-col  lg:gap-4 gap-0.5 w-full'>
                     <label htmlFor="files" className='lg:w-40 text-sm'>Upload Your Work <span className='text-red-500'>*</span></label>
@@ -96,7 +96,7 @@ const AddProjectForm = () => {
                 </div>
                 <DisplayTable />
                 <div className='flex justify-center items-center'>
-                    <button type='submit' disabled={loading} className={`bg-blue-500 text-white font-semibold px-2.5 py-1 font-sans ${loading ? 'opacity-70 cursor-default' : ''}`}>{loading?'Adding...':'Submit'}</button>
+                    <button type='submit' disabled={loading} className={`bg-blue-500 text-white font-semibold px-2.5 py-1 font-sans ${loading ? 'opacity-70 cursor-default' : ''}`}>{loading ? 'Adding...' : 'Submit'}</button>
                 </div>
             </form>
         </div>

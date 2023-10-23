@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import { useTable } from 'react-table';
 import { useSelector } from 'react-redux';
 
-import { displayTableColumns } from '../data'
 import './table.css'
+import { displayTableColumns } from '../data/tableColumns';
 
 
 
@@ -30,7 +30,7 @@ const DisplayTable = () => {
                     {headerGroups.map((headerGroup) => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map((column) => (
-                                <th {...column.getHeaderProps()} style={{maxWidth:'3rem'}}>
+                                <th {...column.getHeaderProps()} style={{ maxWidth: '3rem' }}>
                                     {column.render('Header')}
                                 </th>
                             ))}

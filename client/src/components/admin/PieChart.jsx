@@ -9,11 +9,11 @@ export const options = {
 };
 
 const PieChart = () => {
-    const {pieChartData} = useSelector((state) => state.work)
-    const data = useMemo(() => pieChartData,[pieChartData])
+  const { pieChartData } = useSelector((state) => state.work)
+  const data = useMemo(() => pieChartData, [pieChartData])
   return (
     <>
-      {data && data?.length > 0 &&<Chart
+      {data && data?.length > 0 && <Chart
         chartType="PieChart"
         data={data}
         options={options}

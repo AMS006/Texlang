@@ -1,5 +1,5 @@
 import {createSlice,} from '@reduxjs/toolkit'
-import { contentType } from '../../components/data'
+import { contentType } from '../../components/data/selectOptions'
 
 const initialState = {
     works : [],

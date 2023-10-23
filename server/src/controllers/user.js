@@ -9,7 +9,8 @@ const generateToken = require('../utils/generateToken');
 
 exports.loginUser = async(req,res) =>{
     try {
-        const {email,password,code} = req.body;
+        const { email, password, code } = req.body;
+
         if(!email || !password || !code)
             return res.status(400).json({message:"Plzz provide all fields"})
         
@@ -41,19 +42,14 @@ exports.loginUser = async(req,res) =>{
             id:userId,
             name: userData?.firstName + " " + userData?.lastName,
             email: userData?.email,
-            role: userData?.role
+            role: userData?.role,
+            companyId: userData?.companyId,
+            companyName: userData?.companyName,
         }
         
         const token = generateToken(user,'24h')
-        const cookieOptions = {
-          maxAge: 86400000,
-          httpOnly: true,
-          sameSite: "none",
-          secure: true,
-        };
-        res.cookie("token", token, cookieOptions);
         
-        return res.status(200).json({user})
+        return res.status(200).json({user,token})
     } catch (error) {
         console.log("User-Login : ", error.message)
         return res.status(500).json({message:"Something went wrong"})
@@ -62,7 +58,7 @@ exports.loginUser = async(req,res) =>{
 
 exports.sendCode = async(req,res) =>{
     try {
-        const {email} = req.body
+        const {email,password} = req.body
       
         const userCollection = db.collection('users');
         const userSnapshot = await userCollection.where('email', '==', email).get();
@@ -71,13 +67,23 @@ exports.sendCode = async(req,res) =>{
         }
         const userDoc = userSnapshot.docs[0]
         const userData = userDoc.data()
+
+        const passwordMatch = await bcrypt.compare(password, userData?.password);
+        if(!passwordMatch)
+            return res.status(400).json({ message: "Invalid Credentials" })
+        
         if(!userData.status){
             return res.status(400).json({message:"Email Id Deactivated"})
         }
-        const code =  crypto.randomInt(0,1000000000)
-        await sendEmail(email,code);
+        const code = crypto.randomInt(0, 1000000000)
+        const html =  `<p>Dear Customer, <br />
+                    The Security code for your login process is: ${code}`
         
-        await userDoc.ref.update({verificationCode:code})
+        
+        await userDoc.ref.update({ verificationCode: code })
+        
+        await sendEmail(email,html);
+        
         return res.status(200).json({message:"Verification code send to Email Id"})
     } catch (error) {
         console.log("Send Email : ", error.message)
@@ -117,7 +123,8 @@ exports.changePassword = async(req,res) =>{
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword,salt)
         await userDocRef.update({
-            password:hashedPassword
+            password: hashedPassword,
+            userId:user.id
         })
         return res.status(200).json({message:"Password Changed Successfully"})
     } catch (error) {
@@ -134,11 +141,15 @@ exports.forgotPassword = async(req,res) =>{
         if(userSnapshot.empty){
             return res.status(404).json({message:"User with email not registered"})
         }
-        const code =  crypto.randomInt(0,1000000000)
-        await sendEmail(email,code);
+        const userId = userSnapshot.docs[0].id
+        const code = crypto.randomInt(0, 1000000000)
+        const html = `<p>Dear Customer, <br />
+
+        The Security code to reset your password is : ${code}`
+        await sendEmail(email,html);
         
         const userDoc = userSnapshot.docs[0]
-        await userDoc.ref.update({forgotPasswordCode:code})
+        await userDoc.ref.update({forgotPasswordCode:code,userId})
         return res.status(200).json({message:"Verification code send to Email Id"})
     } catch (error) {
         console.log("Forgot-Password : ", error.message)
@@ -156,7 +167,7 @@ exports.resetPassword = async(req,res) =>{
             return res.status(404).json({message:"User with email not registered"})
         }
         const userData = userSnapshot.docs[0].data();
-
+        const userId = userSnapshot.docs[0].id
         const codeMatch = userData.forgotPasswordCode == code
         if(!codeMatch)
             return res.status(400).json({message:"Invalid Verification Code"})
@@ -165,7 +176,7 @@ exports.resetPassword = async(req,res) =>{
         const hashedPassword = await bcrypt.hash(newPassword,salt)
 
         const userDoc = userSnapshot.docs[0]
-        await userDoc.ref.update({password:hashedPassword})
+        await userDoc.ref.update({password:hashedPassword,userId})
 
         return res.status(200).json({message:"Password Updated Successfully"})
     } catch (error) {
@@ -176,7 +187,7 @@ exports.resetPassword = async(req,res) =>{
 
 exports.logoutUser = (req,res) =>{
      try {
-        res.cookie('token', '', { maxAge: 0,sameSite:"none", httpOnly: true });
+        res.cookie('token', '', { maxAge: 0, httpOnly: true });
         return res.status(200).json({ message: 'Logged out successfully' });
     } catch (error) {
         console.log("Logout : ",error.message)

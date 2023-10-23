@@ -4,7 +4,7 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import {yupResolver} from '@hookform/resolvers/yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 
 import Input from '../Common/Input'
 import { setChangePassword, setForgotPassword, setForgotPasswordEmail } from '../../redux/reducers/user'
@@ -17,10 +17,10 @@ const ForgetPassword = () => {
     const dispatch = useDispatch()
     const [loading, setLoading] = useState(false);
 
-     const {handleSubmit,formState:{errors},register,reset} = useForm({
-        resolver:yupResolver(formSchema)
+    const { handleSubmit, formState: { errors }, register, reset } = useForm({
+        resolver: yupResolver(formSchema)
     })
-    const formSubmit = async(data) =>{
+    const formSubmit = async (data) => {
         try {
             setLoading(true)
             dispatch(setForgotPasswordEmail(data.email))
@@ -45,7 +45,7 @@ const ForgetPassword = () => {
             <h3 className='font-sans text-2xl'>Forgot Password ?</h3>
             <p className='text-gray-500 text-sm '>Enter your e-mail address below to reset your password.</p>
             <form onSubmit={handleSubmit(formSubmit)} className='flex flex-col gap-4 w-full'>
-                <Input label={'Email'} type={'email'} placeholder={"Enter Your Email"} id={'email'} register={{...register('email')}}  errorMessage={errors?.email?.message}/>
+                <Input label={'Email'} type={'email'} placeholder={"Enter Your Email"} id={'email'} register={{ ...register('email') }} errorMessage={errors?.email?.message} />
                 <div className='flex justify-between items-center'>
                     <button onClick={() => dispatch(setForgotPassword(false))} className='border border-blue-500 px-2.5 py-1.5 hover:bg-blue-500 hover:text-white transition-all ease-in-out duration-200'>Back</button>
                     <input type="submit" disabled={loading} value={`${loading ? 'Verifying...' : 'Submit'}`} className={`bg-blue-500 text-white px-2.5 py-1.5 ${loading ? 'opacity-50' : 'cursor-pointer hover:opacity-90'}`} />

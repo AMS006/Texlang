@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { filesize } from 'filesize'
-import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { deleteObject, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 
 import { app } from '../../firebase';
@@ -24,7 +24,7 @@ const UploadFiles = () => {
     const currFileIndexRef = useRef(currentFileIndex);
     const { user } = useSelector((state) => state.user)
 
-    const handleFileCheck = async(newFiles) => {
+    const handleFileCheck = async (newFiles) => {
         const newUpdatedFiles = [];
         for (let i = 0; i < newFiles.length; i++) {
             if (uploadedFiles[newFiles[i].name] || canceledUpload[newFiles[i].name]) {
@@ -63,9 +63,9 @@ const UploadFiles = () => {
         setFileRemoved(false)
         fileRef.current.click();
     };
-    const calculateDuration = (file,type) =>{
+    const calculateDuration = (file, type) => {
         return new Promise((resolve, reject) => {
-            const mediaElement = document.createElement(type); 
+            const mediaElement = document.createElement(type);
             mediaElement.src = URL.createObjectURL(file);
 
             mediaElement.onloadedmetadata = () => {
@@ -76,22 +76,22 @@ const UploadFiles = () => {
         });
 
     }
-    const handleUpload = async(file) => {
+    const handleUpload = useCallback(async (file) => {
         const storage = getStorage(app);
         const fileName = file?.name;
-        const storageRef = ref(storage, user.id + '_' + fileName);
+        const storageRef = ref(storage, `${user.companyName.split(' ').join('_')}/${user.id}_${fileName}`);
         const form = new FormData();
-            form.append('file', file);
-            form.append('name', file.name);
-            
-            if(file.type.startsWith('video')){
-                const value = await calculateDuration(file,'video');
-                form.append('value',value)
-            }
-            else if(file.type.startsWith('audio')){
-                const value = await calculateDuration(file,'audio')
-                form.append('value',value)
-            }
+        form.append('file', file);
+        form.append('name', file.name);
+
+        if (file.type.startsWith('video')) {
+            const value = await calculateDuration(file, 'video');
+            form.append('value', value)
+        }
+        else if (file.type.startsWith('audio')) {
+            const value = await calculateDuration(file, 'audio')
+            form.append('value', value)
+        }
         const uploadTask = uploadBytesResumable(storageRef, file);
         setInProgress(true);
         setUploadTaskMap((prevMap) => ({
@@ -110,24 +110,24 @@ const UploadFiles = () => {
             (error) => {
 
             },
-            async() => {
+            async () => {
                 const res = await axios({
                     method: 'POST',
                     url: 'http://localhost:4000/api/work/upload',
                     withCredentials: true,
                     data: form,
                 })
-               
-                setUploadedFilesData((prev) => [...prev,res.data])
-                setUploadedFiles({ ...uploadedFiles, [fileName]: true });
+
+                setUploadedFilesData((prev) => [...prev, res.data])
+                setUploadedFiles((prev) => ({ ...prev, [fileName]: true }))
                 setFileRemoved(false)
                 currFileIndexRef.current = currFileIndexRef.current + 1;
                 setCurrentFileIndex(currFileIndexRef.current);
                 setInProgress(false)
-               
+
             }
         );
-    };
+    }, [user]);
 
     const handleDelteFile = (fileName) => {
         const storage = getStorage(app);
@@ -167,7 +167,7 @@ const UploadFiles = () => {
                 setProgressFiles(updatedProgressFiles);
             }
         }
-        
+
     };
 
     const handleCancelUpload = (file) => {
@@ -190,15 +190,15 @@ const UploadFiles = () => {
         if (!inProgress && !fileRemoved && files.length > 0 && currentFileIndex < files.length) {
             handleUpload(files[currentFileIndex]);
         }
-    }, [files, currentFileIndex, fileRemoved, inProgress]);
+    }, [files, currentFileIndex, fileRemoved, inProgress, handleUpload]);
 
     const dispatch = useDispatch()
     useEffect(() => {
-        if (uploadedFilesData ) {
+        if (uploadedFilesData) {
             const updatedFilesData = uploadedFilesData.filter((file) => !canceledUpload.hasOwnProperty(file.name))
             dispatch(setFilesData(updatedFilesData))
         }
-    }, [uploadedFilesData, dispatch])
+    }, [uploadedFilesData, dispatch, canceledUpload])
     const { clearFile } = useSelector((state) => state.file)
 
     useEffect(() => {
@@ -222,12 +222,12 @@ const UploadFiles = () => {
                 onClick={handleFileExplorer}
                 className='flex  gap-2.5 flex-wrap justify-center items-center cursor-pointer overflow-y-auto h-36 w-full border p-1.5  border-dashed rounded border-blue-500'
             >
-                <input type='file' multiple name='files' id='' className='hidden' ref={fileRef} onChange={(e) => {  handleFileCheck(e.target.files) }} />
+                <input type='file' multiple name='files' id='' className='hidden' ref={fileRef} onChange={(e) => { handleFileCheck(e.target.files) }} />
                 <h1 className='font-bold text-2xl'>Drag Files or Click</h1>
             </div>
             <div className='flex gap-2.5 flex-wrap items-start justify-start'>
                 {files &&
-                    files.map((file,idx) => (
+                    files.map((file, idx) => (
                         <div className='flex flex-col justify-between gap-1  border border-black w-36 h-44 p-1 rounded shadow' key={file.name}>
                             <p className='bg-gray-300 p-1 h-1/2 break-words overflow-y-auto custom-scrollbar'>{file.name}</p>
                             {canceledUpload[file.name] ?

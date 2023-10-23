@@ -9,6 +9,7 @@ const countWords = async(file) =>{
     if (file.mimetype === 'application/pdf') {
        try {
             const pdfData = await PDFParser(file.buffer);
+            console.log(pdfData.numpages)
             const text = pdfData.text;
             const wordCount = text.split(/\s+/).length;
             
@@ -22,7 +23,9 @@ const countWords = async(file) =>{
         try {
             const extractor = new WordExtractor();
             const extracted = await extractor.extract(file.buffer);
+            
             const text = extracted.getBody()
+            
             const wordCount = text.split(/\s+/).length;
            
             return wordCount;
@@ -83,7 +86,7 @@ exports.uploadWork = async(req,res) =>{
         else{
             wordCount = await countWords(file)
         }
-        const remoteFileName = `${user.id}_${req.body.name}`;
+        const remoteFileName = `${user.companyName.split(' ').join('_')}/${user.id}_${req.body.name}`;
 
  
         const fileName = file.originalname;

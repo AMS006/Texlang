@@ -1,12 +1,13 @@
 const express = require('express');
-const { loginUser, sendCode,forgotPassword, changePassword, getUser, resetPassword, logoutUser } = require('../controllers/user');
+const { loginUser, sendCode,forgotPassword, changePassword, getUser, resetPassword, logoutUser, loginMegdapAdmin } = require('../controllers/user');
 const isUser = require('../middleware/isUser');
 
 const router = express.Router();
 
 router.post('/sendCode',sendCode);
 
-router.post('/login',loginUser);
+router.post('/login', loginUser);
+
 
 router.get('/',isUser,getUser)
 

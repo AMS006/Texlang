@@ -5,6 +5,8 @@ const  initialState = {
     allUsers:[],
     loading: false,
     user: undefined,
+    codeSend: false,
+    userData:undefined,
     forgotPassword:false,
     changePassword:false,
     allUserLoading: false,
@@ -30,6 +32,12 @@ const userSlice = createSlice({
         },
         setChangePassword:(state,action)=>{
             state.changePassword = action.payload
+        },
+        setCodeSend: (state, action) => {
+            state.codeSend = action.payload
+        },
+        setUserData: (state, action) => {
+            state.userData = action.payload
         },
         setUser:(state,action) =>{
             state.loading = false
@@ -65,6 +73,6 @@ const userSlice = createSlice({
     }
 })
 
-export const {userRequest,getAllUserRequest,setUser,updateUser,clearUser,setUserError,setForgotPasswordEmail,setAllUsers , setForgotPassword, setChangePassword,clearAllUsers} = userSlice.actions
+export const {userRequest,getAllUserRequest,setUser,updateUser,clearUser,setUserError,setForgotPasswordEmail,setAllUsers,setUserData ,setCodeSend, setForgotPassword, setChangePassword,clearAllUsers} = userSlice.actions
 
 export default userSlice.reducer

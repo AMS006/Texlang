@@ -6,8 +6,11 @@ const { db } = require("../../../firebase")
 
 exports.registerUser = async(req,res) =>{
     try {
-        const {firstName,lastName,email,password} = req.body
-        
+        const { firstName, lastName, email, password } = req.body
+        const user = req.user;
+        if(!user)
+            return res.status(402).json({ message:"Unauthorized"})
+      
         if(validator.isEmpty(firstName) || validator.isEmpty(lastName) || validator.isEmpty(email) || validator.isEmpty(password)){
             return res.status(400).json({message:"Invalid Request"})
         }
@@ -24,7 +27,19 @@ exports.registerUser = async(req,res) =>{
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt)
         const date = admin.firestore.FieldValue.serverTimestamp()
-        await db.collection("users").add({firstName,lastName,email,password:hashedPassword,totalBilledAmount:0,role:"user",status:true,createdAt:date})
+        await db.collection("users").add(
+            {
+                firstName,
+                lastName,
+                email,
+                companyId: user?.companyId,
+                companyName: user?.companyName,
+                password: hashedPassword,
+                totalBilledAmount: 0,
+                role: "user",
+                status: true,
+                createdAt: date
+            })
 
         return res.status(201).json({message:"User Registered"})
     } catch (error) {
@@ -36,8 +51,11 @@ exports.registerUser = async(req,res) =>{
 exports.getAllUser = async (req, res) => {
     try {
         const userCollection = db.collection('users')
+        const user = req.user
+        if(!user)
+            return res.status(401).json({message:"Unauthorized"})
 
-        const userQuery = await  userCollection.orderBy('createdAt', 'desc').get()
+        const userQuery = await  userCollection.where('companyId','==',user?.companyId).orderBy('createdAt', 'desc').get()
         
         const users = userQuery.docs.map((data) => {
             const user = data.data();

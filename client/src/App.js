@@ -23,12 +23,13 @@ import PrivateRoute from './components/Common/PrivateRoute';
 import './App.css';
 import InvoiceGenerate from './pages/admin/InvoiceGenerate';
 import InvoiceDetail from './pages/admin/InvoiceDetail';
+import GenerateReports from './pages/admin/GenerateReports';
 
 function App() {
   const [mounted,setMounted] = useState(false);
   const dispatch = useDispatch()
   useEffect(() =>{
-    if(localStorage.getItem('auth'))
+    if(localStorage.getItem('token'))
       dispatch(getUser())
   },[dispatch])
 
@@ -44,14 +45,14 @@ function App() {
       <Routes>
         <Route path='/' element={<LoginPage />}/>
 
-        <Route path='/Enterprise' element={<PrivateRoute />}>
+        <Route path='Enterprise' element={<PrivateRoute />}>
           <Route path='EnterpriseLanding' element={<AddProject />} />
           <Route path='GetUploadedData' element={<ProjectList />} />
           <Route path='EnterpriseChangePassword' element={<ChangePassword />}/>
           <Route path='EnterpriseFileDownLoad/:id' element={<ProjectDetail />} />
         </Route>
         
-        <Route path='/Admin' element={<AdminRoute />}>
+        <Route path='Admin' element={<AdminRoute />}>
           <Route path='Dashboard' element={<Dashboard />} />
           <Route path='CompanyProjects' element={<CompanyProjects />}/>
           <Route path='AddUser' element={<AddUser />} />
@@ -61,6 +62,7 @@ function App() {
           <Route path="Invoice/Generate/:id" element={<InvoiceGenerate />} />
           <Route path="Invoice/:id" element={<InvoiceDetail />} />
           <Route path='ProjectDetails/:id' element={<ProjectDetails />} />
+          <Route path="GenerateReports" element={<GenerateReports />} />
         </Route>
       </Routes>
     </BrowserRouter>

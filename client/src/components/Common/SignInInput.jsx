@@ -1,16 +1,21 @@
 import React from 'react'
 
-const SignInInput = ({ type, placeholder, id, handleChange, value }) => {
+const SignInInput = ({ label, id, type, placeholder, register, errorMessage, defaultValue }) => {
+
+
     return (
-        <input
-            type={type}
-            placeholder={placeholder}
-            id={id}
-            required
-            value={value}
-            onChange={handleChange}
-            className='border-b border-[#27a4b0] focus:outline-none p-1 w-full'
-        />
+        <div className='flex flex-col gap-0 w-full'>
+            {label && <label htmlFor={id}>{label}</label>}
+            <input
+                type={type}
+                id={id}
+                placeholder={placeholder}
+                {...register}
+                defaultValue={defaultValue}
+                className='border-b border-[#27a4b0] focus:outline-none p-1 w-full'
+            />
+            {errorMessage && <span className='text-xs text-red-500'>{errorMessage}</span>}
+        </div>
     )
 }
 

@@ -8,14 +8,14 @@ import UserManagementTable from '../../components/admin/Table/UserManagementTabl
 const ManageUser = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-      dispatch(getAllUsers())
+    dispatch(getAllUsers())
   }, [dispatch])
-  
+
   return (
     <div className='px-6 py-8'>
-        <h1 className='text-2xl font-sans pb-2.5'>User Managment</h1>
-        <hr />
-        <UserManagementTable />
+      <h1 className='text-2xl font-sans pb-2.5'>User Managment</h1>
+      <hr />
+      <UserManagementTable />
     </div>
   )
 }

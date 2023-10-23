@@ -20,7 +20,7 @@ const LoginForm = () => {
 
     const sendCode = async () => {
         try {
-            if(emailError || email.length === 0)
+            if (emailError || email.length === 0)
                 return toast.error("Invalid Email Id")
             setSendingCode(true)
             await axios({
@@ -52,7 +52,7 @@ const LoginForm = () => {
     const { user, error, loading } = useSelector((state) => state.user)
     const handleSubmit = async (e) => {
         e.preventDefault()
-        dispatch(LoginUser({ email, password, code }))
+        dispatch(LoginUser({ email, password, code, companyCode }))
     }
     useEffect(() => {
         if (user && !error) {

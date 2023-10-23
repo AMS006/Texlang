@@ -6,6 +6,10 @@ const { getWorksData, formatJobWiseData } = require('./work')
 exports.addProject = async(req,res) =>{
     try {
         const {name,department,works,totalCost,description} = req.body
+        const user = req.user
+        
+        if(!user)
+            return res.status(401).json({ message: "Invalid Request" })
         
         if(validator.isEmpty(name) || validator.isEmpty(department)){
             return res.status(400).json({message:"Plzz provide all Fields"})
@@ -13,31 +17,38 @@ exports.addProject = async(req,res) =>{
         if(!works || works.length == 0)
             return res.status(400).json({message:"Invalid Request"})
 
-        const user = req.user
-        if(!user)
-            return res.status(401).json({message:"Invalid Request"})
 
         const userRef =  db.collection('users').doc(user.id)
         const projectRef = db.collection('projects').doc()
-        const jobWiseDataRef = db.collection('metadata').doc('jobWiseData')
+        const jobWiseDataRef = db.collection('metadata').doc(`${user.companyName.split(' ').join('_')}_jobWiseData`)
 
          const userDetail = {
             email: user.email,
             name:user.name
         }
-        const date = admin.firestore.FieldValue.serverTimestamp()
+        const start_date = admin.firestore.FieldValue.serverTimestamp()
+        const twoDaysInSeconds = 2 * 24 * 60 * 60; // 2 days in seconds
+        const date = new Date();
+        date.setSeconds(date.getSeconds() + twoDaysInSeconds);
+        const end_date = admin.firestore.Timestamp.fromDate(date);
+
         
+
         const projectData = {
             name,
             department,
             totalCost:Number(totalCost),
-            createdAt:date,
+            createdAt: start_date,
+            end_date,
             description:description?description:'',
             userId:user.id,
-            user:userDetail,
-            status:"In Progress"
+            user: userDetail,
+            companyId: user?.companyId,
+            companyName: user?.companyName,
+            status: "In Progress",
         }
 
+        // Transaction to Update the billed amount of user to add Project and associated work with it and to update JobWiseData
         await db.runTransaction(async(transaction)=>{
             const amount = Number(totalCost)
             const jobWiseDataExists = (await transaction.get(jobWiseDataRef)).exists
@@ -51,17 +62,16 @@ exports.addProject = async(req,res) =>{
 
             worksData.forEach((work) =>{
                 const workRef = db.collection('works').doc();
-                transaction.set(workRef,work)
+                transaction.set(workRef,{...work})
             })
 
             const jobWiseData = formatJobWiseData(works)
-
 
             if(jobWiseDataExists){
                 for(const field in jobWiseData){
                     const val = Number(jobWiseData[field])
 
-                    transaction.update(jobWiseDataRef,{
+                    transaction.update(jobWiseDataRef, {
                         [field]:admin.firestore.FieldValue.increment(val)
                     })
                 }
@@ -83,38 +93,34 @@ exports.getProjects = async (req, res) => {
         const user = req.user;
         if (!user) return res.status(400).json({ message: "Invalid Request" });
 
-        
-
         const projectRef = db.collection('projects');
 
-        
-        let projectQuery = projectRef
-            .where('userId', '==', user.id)
-            .orderBy('createdAt','desc');
+        let projectQuery = projectRef.where('userId', '==', user.id).orderBy('createdAt','desc');
        
         const projectSnapshot = await projectQuery.get()
-
         
-
         const projects = projectSnapshot.docs.map((doc) =>{
             const id = doc.id
-            const data = doc.data();
-            const timestamp = {
-                seconds: data.createdAt._seconds,
-                nanoseconds: data.createdAt._nanoseconds
+            const projectDoc = doc.data();
+            const start_date_timestamp = {
+                seconds: projectDoc.createdAt._seconds,
+                nanoseconds: projectDoc.createdAt._nanoseconds
             };
+            const end_date_timestamp = {
+                seconds: projectDoc.end_date._seconds,
+                nanoseconds: projectDoc.end_date._nanoseconds
+            }
 
-            const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-            const end_date = new Date(date);
-            end_date.setDate(end_date.getDate() + 2);
+            const start_date = new Date(start_date_timestamp.seconds * 1000 + start_date_timestamp.nanoseconds / 1000000);
+            const end_date = new Date(end_date_timestamp.seconds * 1000 + end_date_timestamp.nanoseconds / 1000000);
 
             return {
                 id,
-                name: data?.name,
-                userId: data?.user?.email,
-                start_date: date,
-                end_date: end_date,
-                status: data?.status
+                name: projectDoc?.name,
+                userId: projectDoc?.user?.email,
+                start_date,
+                end_date,
+                status: projectDoc?.status
             };
         })
 
