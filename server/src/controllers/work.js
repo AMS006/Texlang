@@ -9,7 +9,6 @@ const countWords = async(file) =>{
     if (file.mimetype === 'application/pdf') {
        try {
             const pdfData = await PDFParser(file.buffer);
-            console.log(pdfData.numpages)
             const text = pdfData.text;
             const wordCount = text.split(/\s+/).length;
             

@@ -12,7 +12,6 @@ const getDownloadUrl = async (path) => {
 exports.getProjectWorks = async (req, res) => {
     try {
         const { projectId } = req.params;
-        console.log(projectId)
         if (!projectId) return res.status(400).json({
             message: "Invalid Request"
         });
@@ -35,7 +34,7 @@ exports.getProjectWorks = async (req, res) => {
                 downloadUrl
             };
         }));
-        console.log(works)
+        
         return res.status(200).json({works});
     } catch (error) {
         console.log("Get Work Error: ", error.message);
