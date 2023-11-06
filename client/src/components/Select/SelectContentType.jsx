@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import { updateFile } from '../../redux/reducers/file';
 import { useDispatch, useSelector } from 'react-redux';
-import { contentStyles, contentType } from '../data/selectOptions';
+import { contentStyles, contentType } from '../../data/selectOptions';
 
 
 

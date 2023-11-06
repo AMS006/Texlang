@@ -1,6 +1,6 @@
 import React from 'react'
 import Select from 'react-select';
-import { recordsOptions } from '../data/selectOptions';
+import { recordsOptions } from '../../data/selectOptions';
 
 const SelectRecords = ({ pageSize, setPageSize }) => {
 

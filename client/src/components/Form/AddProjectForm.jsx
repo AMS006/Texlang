@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Input from '../Common/Input'
 import UploadFiles from './UploadFiles'
 import DisplayTable from '../Table/DisplayTable'
-import { setClearFile } from '../../redux/reducers/file'
+import { clearFiles, setClearFile } from '../../redux/reducers/file'
 
 const formSchema = yup.object({
     name: yup.string().required("Project Name is Required"),
@@ -55,21 +55,20 @@ const AddProjectForm = () => {
             else if (Number(work.value)) {
                 totalCost += (Number(work.value) * 1.5) * work.targetLanguage?.length
             }
-
         })
         try {
             await axios({
                 method: "POST",
                 url: "http://localhost:4000/api/project",
                 data: { ...data, totalCost, works: files },
-                withCredentials: true
             })
             toast.success("Project Added")
             setLoading(false)
             dispatch(setClearFile(true))
+            dispatch(clearFiles())
             reset()
         } catch (error) {
-            const message = error.response.data.message || 'Something went wrong'
+            const message = error.response.data.message || 'Unable to Add Project'
             setLoading(false)
             toast.error(message)
         }

@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { deleteObject, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 
 import { app } from '../../firebase';
-import { setClearFile, setFilesData } from '../../redux/reducers/file';
+import { clearFiles, removeFile, setFilesData } from '../../redux/reducers/file';
 
 const UploadFiles = () => {
 
@@ -74,15 +74,31 @@ const UploadFiles = () => {
                 resolve(duration);
             };
         });
-
     }
+    const handleError = useCallback((file) => {
+        setFileRemoved(false)
+        setInProgress(false)
+        setProgressFiles((prevFiles) => {
+            const updatedProgress = { ...prevFiles }
+            delete updatedProgress[file.name];
+            return updatedProgress
+
+        });
+        setCanceledUpload((prev) => ({ ...prev, [file.name]: true }))
+        currFileIndexRef.current = currFileIndexRef.current + 1;
+        setCurrentFileIndex(currFileIndexRef.current);
+        console.log(currFileIndexRef.current)
+    }, [])
+
     const handleUpload = useCallback(async (file) => {
         const storage = getStorage(app);
         const fileName = file?.name;
-        const storageRef = ref(storage, `${user.companyName.split(' ').join('_')}/${user.id}_${fileName}`);
+        const timeStamp = Date.now();
+        const storageRef = ref(storage, `${user.companyName.split(' ').join('_')}/${user.id}/${timeStamp}/${fileName}`);
         const form = new FormData();
         form.append('file', file);
-        form.append('name', file.name);
+        form.append('name', fileName);
+        form.append('timeStamp', timeStamp);
 
         if (file.type.startsWith('video')) {
             const value = await calculateDuration(file, 'video');
@@ -108,28 +124,31 @@ const UploadFiles = () => {
                 });
             },
             (error) => {
-
+                handleError(file)
             },
             async () => {
-                const res = await axios({
-                    method: 'POST',
-                    url: 'http://localhost:4000/api/work/upload',
-                    withCredentials: true,
-                    data: form,
-                })
 
-                setUploadedFilesData((prev) => [...prev, res.data])
-                setUploadedFiles((prev) => ({ ...prev, [fileName]: true }))
-                setFileRemoved(false)
-                currFileIndexRef.current = currFileIndexRef.current + 1;
-                setCurrentFileIndex(currFileIndexRef.current);
-                setInProgress(false)
+                try {
+                    const res = await axios({
+                        method: 'POST',
+                        url: 'http://localhost:4000/api/work/upload',
+                        data: form,
+                    })
 
+                    setUploadedFilesData((prev) => [...prev, res.data])
+                    setUploadedFiles((prev) => ({ ...prev, [fileName]: true }))
+                    setFileRemoved(false)
+                    currFileIndexRef.current = currFileIndexRef.current + 1;
+                    setCurrentFileIndex(currFileIndexRef.current);
+                    setInProgress(false)
+                } catch (error) {
+                    handleError(file)
+                }
             }
         );
-    }, [user]);
+    }, [user, handleError]);
 
-    const handleDelteFile = (fileName) => {
+    const handleDeleteFile = (fileName) => {
         const storage = getStorage(app);
         const fileRef = ref(storage, fileName);
 
@@ -138,12 +157,14 @@ const UploadFiles = () => {
 
     const handleRemoveFile = (file) => {
         setFileRemoved(true)
+        dispatch(removeFile(file.name))
         if (canceledUpload[file.name] || uploadedFiles[file.name]) {
             currFileIndexRef.current = currFileIndexRef.current - 1;
             setCurrentFileIndex(currentFileIndex - 1)
         }
         if (uploadedFiles[file.name]) {
-            handleDelteFile(user.id + '_' + file.name)
+            const filePath = uploadedFilesData.filter((f) => f.name === file.name)[0].filePath
+            handleDeleteFile(filePath)
             const updatedFiles = files.filter((f) => f.name !== file.name);
             const updatedUploadedFiles = { ...uploadedFiles };
             delete updatedUploadedFiles[file.name];
@@ -172,18 +193,10 @@ const UploadFiles = () => {
 
     const handleCancelUpload = (file) => {
         const fileName = file.name;
-        setFileRemoved(false)
-        setInProgress(false);
         const existingUploadTask = uploadTaskMap[fileName];
         if (existingUploadTask && existingUploadTask._state === 'running') {
             existingUploadTask.cancel();
         }
-        const updatedProgressFiles = { ...progressFiles };
-        delete updatedProgressFiles[file.name];
-        setProgressFiles(updatedProgressFiles);
-        setCanceledUpload({ ...canceledUpload, [fileName]: true })
-        currFileIndexRef.current = currFileIndexRef.current + 1;
-        setCurrentFileIndex(currFileIndexRef.current);
     }
 
     useEffect(() => {
@@ -193,26 +206,33 @@ const UploadFiles = () => {
     }, [files, currentFileIndex, fileRemoved, inProgress, handleUpload]);
 
     const dispatch = useDispatch()
+
+
     useEffect(() => {
-        if (uploadedFilesData) {
-            const updatedFilesData = uploadedFilesData.filter((file) => !canceledUpload.hasOwnProperty(file.name))
-            dispatch(setFilesData(updatedFilesData))
-        }
+
+        const updatedFilesData = uploadedFilesData.filter((file) => !canceledUpload.hasOwnProperty(file.name))
+        dispatch(setFilesData(updatedFilesData))
+
     }, [uploadedFilesData, dispatch, canceledUpload])
     const { clearFile } = useSelector((state) => state.file)
 
     useEffect(() => {
         if (clearFile) {
             setFiles([])
+            dispatch(clearFiles())
             setUploadedFiles({})
             setProgressFiles({})
             setCanceledUpload({})
             setCurrentFileIndex(0)
             setUploadedFilesData([])
             currFileIndexRef.current = 0
-            dispatch(setClearFile(false))
+
         }
     }, [clearFile, dispatch])
+
+    useEffect(() => {
+        dispatch(clearFiles())
+    }, [dispatch])
 
     return (
         <div className='flex flex-col w-full gap-2.5'>

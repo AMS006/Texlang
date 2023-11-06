@@ -8,7 +8,7 @@ export const getProjectWork = (projectId) => async (dispatch) => {
         setHeaders()
         const works = await axios({
             method: "GET",
-            url: `http://localhost:4000/api/admin/projectWork/${projectId}`,
+            url: `http://localhost:4000/api/admin/work/projectWork/${projectId}`,
         })
         dispatch(setWorks(works.data.works))
     } catch (error) {
@@ -21,7 +21,7 @@ export const getInvoiceWork = (projectId) => async (dispatch) => {
         setHeaders()
         const works = await axios({
             method: "GET",
-            url: `http://localhost:4000/api/admin/projectWork/invoice/${projectId}`,
+            url: `http://localhost:4000/api/admin/work/projectWork/invoice/${projectId}`,
         })
         dispatch(setWorks(works.data.works))
     } catch (error) {
@@ -33,7 +33,7 @@ export const getPieChartData = () => async(dispatch) =>{
         setHeaders()
        const pieChartData = await axios({
         method:"GET",
-        url:"http://localhost:4000/api/admin/jobWiseData",
+        url:"http://localhost:4000/api/admin/work/jobWiseData",
        })
        dispatch(setPieCharData(pieChartData.data.jobs))
     } catch (error) {

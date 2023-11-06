@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useTable } from 'react-table';
 
 import './table.css'
-import { projectDownloadTable } from '../data/tableColumns';
+import { projectDownloadTable } from '../../data/tableColumns';
 
 const ProjectDownloadTable = ({ targetLanguage }) => {
     const data = useMemo(() => targetLanguage, [targetLanguage])

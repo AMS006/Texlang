@@ -8,7 +8,7 @@ export const getCompanyProjects = () => async(dispatch) =>{
         setHeaders()
         const data = await axios({
             method:"GET",
-            url: `http://localhost:4000/api/admin/companyProjects`,
+            url: `http://localhost:4000/api/admin/project/companyProjects`,
         })
         
         dispatch(setCompanyProjects(data.data.projects))
@@ -23,7 +23,7 @@ export const getLatestProjects = () => async(dispatch) =>{
         setHeaders()
         const data = await axios({
             method:"GET",
-            url: `http://localhost:4000/api/admin/latestProjects`,
+            url: `http://localhost:4000/api/admin/project/latestProjects`,
         })
         
         dispatch(setLatestProjects(data.data.projects))
@@ -38,7 +38,7 @@ export const getProjectDetailsAdmin = (id) => async(dispatch) =>{
         setHeaders()
         const project = await axios({
             method:"GET",
-            url: `http://localhost:4000/api/admin/project/${id}`,
+            url: `http://localhost:4000/api/admin/project/projectDetail/${id}`,
         })
         dispatch(setProject(project.data.project))
     } catch (error) {
@@ -52,7 +52,7 @@ export const getInvoices = () => async(dispatch) =>{
         setHeaders()
         const invoices = await axios({
             method:"GET",
-            url:"http://localhost:4000/api/admin/invoices",
+            url:"http://localhost:4000/api/admin/project/invoices",
         })
         dispatch(setInvoices(invoices.data.projects))
     } catch (error) {

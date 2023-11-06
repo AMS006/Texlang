@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
 const validator = require('validator')
 
@@ -63,7 +63,7 @@ exports.sendCode = async(req,res) =>{
         const userCollection = db.collection('users');
         const userSnapshot = await userCollection.where('email', '==', email).get();
         if(userSnapshot.empty){
-            return res.status(404).json({message:"User with email not registered"})
+            return res.status(404).json({message:"User Not Found"})
         }
         const userDoc = userSnapshot.docs[0]
         const userData = userDoc.data()
@@ -114,18 +114,21 @@ exports.changePassword = async(req,res) =>{
         const {newPassword,currentPassword} = req.body;
         const userDocRef = db.collection('users').doc(user.id);
         const userDoc = await userDocRef.get()
+
         if(!userDoc.exists){
             return res.status(404).json({message:"User Not Found"})
         }
         const passwordMatch = await bcrypt.compare(currentPassword,userDoc.data().password)
         if(!passwordMatch)
             return res.status(400).json({message:"Current Password does not match"})
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword,salt)
+
         await userDocRef.update({
             password: hashedPassword,
-            userId:user.id
         })
+
         return res.status(200).json({message:"Password Changed Successfully"})
     } catch (error) {
         console.log("Password-Change: ",error.message)
@@ -141,15 +144,15 @@ exports.forgotPassword = async(req,res) =>{
         if(userSnapshot.empty){
             return res.status(404).json({message:"User with email not registered"})
         }
-        const userId = userSnapshot.docs[0].id
         const code = crypto.randomInt(0, 1000000000)
         const html = `<p>Dear Customer, <br />
-
         The Security code to reset your password is : ${code}`
+
         await sendEmail(email,html);
         
         const userDoc = userSnapshot.docs[0]
-        await userDoc.ref.update({forgotPasswordCode:code,userId})
+        await userDoc.ref.update({forgotPasswordCode:code})
+
         return res.status(200).json({message:"Verification code send to Email Id"})
     } catch (error) {
         console.log("Forgot-Password : ", error.message)
@@ -182,15 +185,5 @@ exports.resetPassword = async(req,res) =>{
     } catch (error) {
         console.log("Update-Password: ", error.message)
         return res.status(500).json({message:"Something went wrong"})
-    }
-}
-
-exports.logoutUser = (req,res) =>{
-     try {
-        res.cookie('token', '', { maxAge: 0, httpOnly: true });
-        return res.status(200).json({ message: 'Logged out successfully' });
-    } catch (error) {
-        console.log("Logout : ",error.message)
-      return res.status(500).json({ message: "Something went wrong" });
     }
 }

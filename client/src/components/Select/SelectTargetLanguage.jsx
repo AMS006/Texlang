@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { updateFile } from '../../redux/reducers/file';
-import { languageOptions, languageStyles } from '../data/selectOptions';
+import { languageOptions, languageStyles } from '../../data/selectOptions';
 
 
 const SelectTargetLanguage = ({ name }) => {
@@ -22,7 +22,7 @@ const SelectTargetLanguage = ({ name }) => {
         if (file) {
             let languages = []
             lang.forEach((val) => {
-                languages.push({ lang: val.value, downloadUrl: '' })
+                languages.push({ lang: val.value })
             })
             let updatedFile = { ...file, targetLanguage: languages }
             setFile(updatedFile)

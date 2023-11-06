@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useTable } from 'react-table';
 import { useSelector } from 'react-redux';
-import { invoiceFileTableColumn } from '../../data/tableColumns';
+import { invoiceFileTableColumn } from '../../../data/tableColumns';
 
 const InvoiceFileTable = () => {
     const { works, loading } = useSelector((state) => state.work)

@@ -1,7 +1,8 @@
-const express = require('express');
 const multer = require('multer');
-const { uploadWork, addComment } = require('../controllers/work');
+const express = require('express');
+
 const isUser = require('../middleware/isUser');
+const { uploadWork, addComment } = require('../controllers/work');
 
 const router = express.Router();
 

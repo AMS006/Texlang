@@ -8,7 +8,7 @@ export const getAllUsers = () => async (dispatch) => {
         setHeaders()
         const users = await axios({
             method: "GET",
-            url: "http://localhost:4000/api/admin/allUsers",
+            url: "http://localhost:4000/api/admin/user/allUsers",
         })
         if (users)
                 dispatch(setAllUsers(users.data.users))

@@ -4,7 +4,7 @@ exports.getAllProjects = async (req, res) => {
     try {
         const user = req.user;
         if (!user) return res.status(400).json({ message: "Invalid Request" });
-
+        
         const projectCollection = db.collection('projects');
 
         let projectQuery = projectCollection.where('companyId','==',user?.companyId).orderBy('createdAt','desc');
@@ -14,19 +14,9 @@ exports.getAllProjects = async (req, res) => {
         const projects = projectsData.docs.map((item) => {
             const id = item.id
             const projectDoc = item.data();
-
-            const start_date_timestamp = {
-                seconds: projectDoc.createdAt._seconds,
-                nanoseconds: projectDoc.createdAt._nanoseconds
-            };
-            const end_date_timestamp = {
-                seconds: projectDoc.end_date._seconds,
-                nanoseconds: projectDoc.end_date._nanoseconds
-            }
-
-            const start_date = new Date(start_date_timestamp.seconds * 1000 + start_date_timestamp.nanoseconds / 1000000);
-            const end_date = new Date(end_date_timestamp.seconds * 1000 + end_date_timestamp.nanoseconds / 1000000);
-
+            
+            const start_date = new Date(projectDoc.start_date.seconds * 1000 + projectDoc.start_date._nanoseconds / 1000000);
+            const end_date = new Date(projectDoc.end_date.seconds * 1000 + projectDoc.end_date._nanoseconds / 1000000);
             return {
                 id,
                 name: projectDoc.name,
@@ -56,22 +46,16 @@ exports.getLatestProject = async (req, res) => {
 
         const projects = projectsData.docs.map((item) => {
             const id = item.id
-            const data = item.data();
-            const timestamp = {
-                seconds: data.createdAt._seconds,
-                nanoseconds: data.createdAt._nanoseconds
-            };
-
-            const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-            const end_date = new Date(date);
-            end_date.setDate(end_date.getDate() + 2);
-
+            const projectDoc = item.data();
+            
+            const start_date = new Date(projectDoc.start_date.seconds * 1000 + projectDoc.start_date._nanoseconds / 1000000);
+            const end_date = new Date(projectDoc.end_date.seconds * 1000 + projectDoc.end_date._nanoseconds / 1000000);
             return {
                 id,
-                name: data.name,
-                start_date: date,
-                end_date: end_date,
-                status: data.status
+                name: projectDoc?.name,
+                start_date,
+                end_date,
+                status: projectDoc?.status
             };
         });
 
@@ -91,30 +75,25 @@ exports.getProjectDetailsAdmin = async(req,res) =>{
 
         const projectCollection = db.collection('projects');
 
-        const data = (await projectCollection.doc(id).get()).data()
-
-        const timestamp = {
-            seconds: data?.createdAt._seconds,
-            nanoseconds: data?.createdAt._nanoseconds
-        };
-
-        const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-        const end_date = new Date(date);
-        end_date.setDate(end_date.getDate() + 2);
+        const projectDoc = (await projectCollection.doc(id).get()).data()
+        
+        const start_date = new Date(projectDoc.start_date.seconds * 1000 + projectDoc.start_date._nanoseconds / 1000000);
+        const end_date = new Date(projectDoc.end_date.seconds * 1000 + projectDoc.end_date._nanoseconds / 1000000);
+            
         const project = {
             id,
-            name: data?.name,
-            department:data?.department,
-            userId: data?.user?.email,
-            userName: data?.user?.name,
-            totalCost:data?.totalCost,
-            start_date: date,
-            end_date: end_date,
-            status: data?.status
+            name: projectDoc?.name,
+            department:projectDoc?.department,
+            userId: projectDoc?.user?.email,
+            userName: projectDoc?.user?.name,
+            totalCost:projectDoc?.totalCost,
+            start_date,
+            end_date,
+            status: projectDoc?.status
         }
         return res.status(200).json({project})
     } catch (error) {
-        console.log("Get Project Error: ", error.message);
+        console.log("Get Project Error Admin: ", error.message);
         return res.status(500).json({ message: "Something went wrong" });
     }
 }

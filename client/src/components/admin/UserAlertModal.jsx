@@ -17,9 +17,8 @@ const UserAlertModal = ({ open, setOpen, user }) => {
       try {
         await axios({
           method: "PUT",
-          url: "http://localhost:4000/api/admin/changeStatus",
+          url: "http://localhost:4000/api/admin/user/changeStatus",
           data: { id: user.id, status: !user.status },
-          withCredentials: true
         })
         setLoading(false)
         setOpen(false)

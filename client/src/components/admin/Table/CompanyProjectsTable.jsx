@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
-import { companyProjectListTableColumns } from '../../data/tableColumns';
+import { companyProjectListTableColumns } from '../../../data/tableColumns';
 
 
 const CompanyProjectsTable = () => {

@@ -1,40 +1,42 @@
 const cors = require('cors')
 const express = require('express')
-const cookieParser = require('cookie-parser')
 
-const user = require('./src/routes/user')
-const work = require('./src/routes/work')
-const admin = require('./src/routes/admin')
-const megdapAdmin = require('./src/routes/megdapAdmin')
-const project = require('./src/routes/project')
+const userRouter = require('./src/routes/user')
+const workRouter = require('./src/routes/work')
+const adminRouter = require('./src/routes/admin')
+const projectRouter = require('./src/routes/project')
+const megdapAdminRouter = require('./src/routes/megdapAdmin')
 
 const isAdmin = require('./src/middleware/isAdmin')
-const isMegdapAdmin = require('./src/middleware/isMegdapAdmin')
 require('dotenv').config()
 
 const app = express();
 const PORT = process.env.PORT || 4000
 
-const whitelist = ['http://localhost:3001', 'http://localhost:3000'];
+const whitelist = ['http://localhost:3000', 'http://localhost:3001'];
 
 const corsOptions = {
-    origin: '*', // Origin: true for all
-    credentials: true,
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1 || !origin) callback(null, true);
+        else callback(new Error('Not allowed by CORS'));
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
 };
 
 app.use(cors(corsOptions));
 
+app.use(cors());
 
-app.use(cookieParser())
+
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/user',user)
-app.use('/api/project',project)
-app.use('/api/work',work)
-app.use('/api/admin', isAdmin, admin)
-app.use('/api/megdapadmin',megdapAdmin)
+app.use('/api/user',userRouter)
+app.use('/api/project',projectRouter)
+app.use('/api/work',workRouter)
+app.use('/api/admin', isAdmin, adminRouter)
+app.use('/api/megdapadmin',megdapAdminRouter)
 
 
 app.listen(PORT,() =>{

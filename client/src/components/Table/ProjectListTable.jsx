@@ -4,7 +4,7 @@ import { useTable, useSortBy, useGlobalFilter, usePagination } from 'react-table
 
 import Pagination from '../Common/Pagination';
 import SelectRecords from '../Select/SelectRecords';
-import { projectListTableColumns } from '../data/tableColumns';
+import { projectListTableColumns } from '../../data/tableColumns';
 import './table.css'
 
 const ProjectListTable = () => {

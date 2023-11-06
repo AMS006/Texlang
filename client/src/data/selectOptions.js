@@ -1,0 +1,95 @@
+export const contentType = [
+    { value: 'translation', label: 'Translation' },
+    { value: 'video', label: 'Video(Translation + Editing)' },
+    { value: 'subtitling', label: 'Subtitling' },
+    { value: 'dubbing', label: 'Dubbing/Voice-Over' },
+    { value: 'brochure', label: 'Brochure' },
+    { value: 'banner', label: 'Banner' }
+];
+export const languageOptions = [
+    { value: 'arabic', label: 'Arabic'},
+    { value:'armenian', label: 'Armenian'},
+    {value:'assamese', label:'Assamese'},
+    { value: 'bengali', label: 'Bengali' },
+    { value: 'bulgarian', label: 'Bulgarian'},
+    { value: 'bodo', label: 'Bodo'},
+    { value: 'chineseSimplified', label: 'Chinese-Simplified' },
+    { value: 'chineseTraditional', label: 'Chinese-Traditional' },
+    { value: 'czech', label: 'Czech'},
+    {value: 'danish', label: 'Danish'},
+    { value: 'dutch', label: 'Dutch'},
+    { value: 'dogri', label: 'Dogri'},
+    { value: 'english', label: 'English' },
+    { value: 'french', label: 'French' },
+    { value: 'filipino', label: 'Filipino' },
+    { value: 'finnish', label: 'Finnish'},
+    { value: 'german', label: 'German' },
+    { value: 'goergian', label: 'Georgian'},
+    { value: 'greek', label: 'Greek' },
+    { value: 'gujarati', label: 'Gujarati'},
+    { value: 'hebrew', label: 'Hebrew'},
+    { value: 'hindi', label: 'Hindi' },
+    { value: 'hungarian', label: 'Hungarian'},
+    { value: 'indonesian', label: 'Indonesian' },
+    { value: 'italian', label: 'Italian' },
+    { value: 'irish', label: 'Irish'},
+    { value: 'japanese', label: 'Japanese' },
+    { value: 'kannada', label: 'Kannada'},
+    { value: 'kashmiri', label: 'Kashmiri'},
+    { value: 'korean', label: 'Korean' },
+    { value: 'konkani', label: 'Konkani'},
+    { value: 'latin', label: 'Latin' },
+    { value: 'maithili', label: 'Maithili'},
+    { value: 'malayalam', label: 'Malayalam'},
+    { value: 'manipuri', label: 'Manipuri'},
+    { value: 'marathi', label: 'Marathi'},
+    { value: 'nepali', label: 'Nepali'},
+    { value: 'odia', label: 'Odia'},
+    { value: 'polish', label: 'Polish'},
+    { value: 'punjabi', label: 'Punjabi'},
+    { value: 'russian', label: 'Russian' },
+    { value: 'sanskrit', label: 'Sanskrit'},
+    { value: 'santali', label: 'Santali'},
+    { value: 'serbian', label: 'Serbian'},
+    { value: 'sindhi', label: 'Sindhi'},
+    { value: 'sinhala', label: 'Sinhala'},
+    { value: 'spanish', label: 'Spanish' },
+    { value: 'swedish', label: 'Swedish'},
+    { value: 'tamil', label: 'Tamil' },
+    { value: 'telugu', label: 'Telugu' },
+    { value: 'thai', label: 'Thai' },
+    { value: 'urdu', label: 'Urdu' },
+    { value: 'vietnamese', label: 'Vietnamese' },
+];
+
+export const recordsOptions = [
+        { label: 1, value: 1 },
+        { label: 2, value: 2 },
+        { label: 4, value: 4 },
+        { label: 10, value: 10 },
+        { label: 50, value: 50 },
+    ]
+
+export const languageStyles = {
+    control: (provided) => ({
+        ...provided,
+    }),
+    menu: (provided) => ({
+        ...provided,
+        position: 'absolute',
+        top: -320, 
+        zIndex: 1000,
+        
+    }),
+};
+export const contentStyles = {
+    control: (provided) => ({
+        ...provided,
+    }),
+    menu: (provided) => ({
+        ...provided,
+        position: 'absolute',
+        top: -280, 
+        zIndex: 1000,
+    }),
+};

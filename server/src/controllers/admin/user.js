@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const validator = require('validator')
 const admin = require('firebase-admin')
 
@@ -26,6 +26,7 @@ exports.registerUser = async(req,res) =>{
         
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt)
+
         const date = admin.firestore.FieldValue.serverTimestamp()
         await db.collection("users").add(
             {

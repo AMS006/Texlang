@@ -1,12 +1,12 @@
 const { db,admin } = require("../../../firebase")
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 
 exports.addNewCompany = async (req, res) => {
     try {
         
         const { adminFirstName, adminLastName, adminPassword, adminEmail,country, companyName, ...data } = req.body
         
-    if (!adminEmail || !companyName || !adminFirstName || !adminLastName || !adminPassword || !country)
+        if (!adminEmail || !companyName || !adminFirstName || !adminLastName || !adminPassword || !country)
             return res.status(400).json({ message: "Invalid Request" })
         
         const companyCollection = db.collection('companies');
@@ -93,6 +93,31 @@ exports.getCompanyUsers = async (req, res) => {
         return res.status(200).json({ users })
     } catch (error) {
         console.log('Megdap-Admin-Get-Users', error.message)
+        return res.status(500).json({message:"Someting went wrong"})
+    }
+}
+
+exports.setLanguageRate = async(req, res) => {
+    try {
+        const { companyId, languages } = req.body
+        if (!companyId || !languages || !Array.isArray(languages) || languages.length === 0)
+            return res.status(400).json({ message: "Invalid Request" })
+
+        const languageRef = db.collection('metadata').doc(`${companyId}_languageRates`);
+
+        const updateData = {};
+        languages.forEach((language) => {
+            if (language.unitRate !== undefined) {
+                const fieldPath = `${language.sourceLang}-${language.targetLang}`;
+                updateData[fieldPath] = language.unitRate;
+            }
+        });
+        const batch = db.batch();
+        batch.set(languageRef, updateData, { merge: true });
+        await batch.commit();
+        return res.status(200).json({ message: "Language Rate Updated" })
+    } catch (error) {
+        console.log('Megdap-Admin-Set-Language-Rate', error.message)
         return res.status(500).json({message:"Someting went wrong"})
     }
 }

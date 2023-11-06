@@ -31,7 +31,6 @@ const ChangePassword = () => {
                 method: "POST",
                 url: 'http://localhost:4000/api/user/changePassword',
                 data,
-                withCredentials: true
             })
             setLoading(false)
             toast.success("Password Changed Successfully")

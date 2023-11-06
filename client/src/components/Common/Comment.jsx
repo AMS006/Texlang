@@ -21,7 +21,7 @@ const Comment = ({ id }) => {
                 method: "POST",
                 url: `http://localhost:4000/api/work/comment/${id}`,
                 data,
-                withCredentials: true
+
             })
             setLoading(false)
             toast.success("Comment Added")

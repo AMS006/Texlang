@@ -10,7 +10,6 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 
 const formSchema = yup.object({
-    companyCode: yup.string().required("Company code is Required"),
     code: yup.string().required("Verification code is required")
 })
 
@@ -39,13 +38,14 @@ const Login = () => {
                 })
                 localStorage.setItem("token", res.data.token)
                 dispatch(setUser(res.data.user));
+                dispatch(setCodeSend(false))
             } else {
                 toast.error("Plzz Re-Send the code");
                 dispatch(setCodeSend(false));
             }
         } catch (error) {
             setLoading(false)
-            const message = error?.response?.message || 'Someting went wrong! Try Again'
+            const message = error?.response?.data?.message || 'Someting went wrong! Try Again'
             toast.error(message)
         }
     };
@@ -106,11 +106,9 @@ const Login = () => {
             <h1 className='font-sans text-3xl'>Texlang Enterprise Login</h1>
             <form onSubmit={handleSubmit(formSubmit)} className='flex flex-col justify-center gap-6 w-full'>
 
-                <Input type='text' placeholder={'Enter Company Code'} id={'companyCode'} label={'Company Code'} register={{ ...register('companyCode') }} errorMessage={errors.companyCode?.message} />
-
                 <Input type='text' placeholder={'Enter Verification Code'} label={'Verification Code'} id={'code'} register={{ ...register('code') }} errorMessage={errors.code?.message} />
 
-                <button className={`bg-blue-500 py-1.5 px-2.5 text-white rounded ${loading ? 'opacity-50 cursor-default' : 'hover:opacity-95'}`} disabled={loading}>{loading ? 'Loading...' : 'Sign In'}</button>
+                <button className={`bg-blue-500 py-1.5 px-2.5 text-white rounded select-none ${loading ? 'opacity-50 cursor-default' : 'hover:opacity-95'}`} disabled={loading}>{loading ? 'Loading...' : 'Sign In'}</button>
 
             </form>
 

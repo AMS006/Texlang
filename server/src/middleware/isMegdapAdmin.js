@@ -1,8 +1,10 @@
 const jwt = require('jsonwebtoken')
 
 const isMegdapAdmin = (req, res, next) => {
-    if (req.headers.authorization) {
+    try {
+        if (req.headers.authorization) {
         let token = req.headers.authorization 
+       
         token = token.split(" ")[1];
       
         const { user } = jwt.verify(token, process.env.JWT_SECRET);
@@ -17,7 +19,12 @@ const isMegdapAdmin = (req, res, next) => {
         next()
     }
     else {
-        res.status(401).json({ message: "Unauthorized" });
+            console.log("No Auth Header")
+            res.status(401).json({ message: "Unauthorized" });
+        }
+    } catch (error) {
+        console.log("Megdap-Admin-Auth", error.message)
+        return res.status(500).json({message:"Unauthorized"})
     }
 }
 

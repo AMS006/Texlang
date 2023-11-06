@@ -26,9 +26,8 @@ const AddUser = () => {
             setLoading(true)
             await axios({
                 method: "POST",
-                url: "http://localhost:4000/api/admin/registerUser",
+                url: "http://localhost:4000/api/admin/user/registerUser",
                 data,
-                withCredentials: true
             })
             setLoading(false)
             toast.success("User Created Successfully")

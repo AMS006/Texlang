@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useTable } from 'react-table';
 import { useSelector } from 'react-redux';
-import { latestProjectColumn } from '../../data/tableColumns';
+import { latestProjectColumn } from '../../../data/tableColumns';
 
 const LatestProjectTable = () => {
     const { latestProjects, loading } = useSelector((state) => state.project)

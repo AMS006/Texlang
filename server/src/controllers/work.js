@@ -1,8 +1,8 @@
 const xlsx = require('xlsx');
-const textract = require('textract')
 const {filesize} = require('filesize')
 const PDFParser = require('pdf-parse')
 const WordExtractor = require('word-extractor');
+const textract = require('textract');
 const { db } = require('../../firebase');
 
 const countWords = async(file) =>{
@@ -18,7 +18,7 @@ const countWords = async(file) =>{
             throw new Error("Something went wrong")
        }
     }
-    else if(file.mimetype === 'application/msword'){
+    else if(file.mimetype === 'application/msword' || file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
         try {
             const extractor = new WordExtractor();
             const extracted = await extractor.extract(file.buffer);
@@ -50,8 +50,13 @@ const countWords = async(file) =>{
         }
         return wordCount;
     }
-    else{
-         return new Promise((resolve, reject) => {
+    else if(file.mimetype === 'text/plain'){
+        const text = file.buffer.toString('utf8');
+        const wordCount = text.split(/\s+/).length;
+        return wordCount;
+    }
+    else if(file.mimetype === 'application/vnd.ms-powerpoint' || file.mimetype === 'application/vnd.openxmlformats-officedocument.presentationml.presentation'){
+        return new Promise((resolve, reject) => {
             textract.fromBufferWithMime(file.mimetype, file.buffer, (err, text) => {
                 if (err) {
                     reject(err);
@@ -61,6 +66,8 @@ const countWords = async(file) =>{
                 }
             });
         });
+    }else{
+        return 0;
     }
 }
 exports.uploadWork = async(req,res) =>{
@@ -73,7 +80,7 @@ exports.uploadWork = async(req,res) =>{
         if (!file) {
             return res.status(400).send('No file uploaded');
         }
-        const mimetype = file.mimetype
+        const mimetype = file.mimetype;
         let value = 0, wordCount = 0;
         if(mimetype.startsWith('image')){
             value = 1;
@@ -85,7 +92,7 @@ exports.uploadWork = async(req,res) =>{
         else{
             wordCount = await countWords(file)
         }
-        const remoteFileName = `${user.companyName.split(' ').join('_')}/${user.id}_${req.body.name}`;
+        const remoteFileName = `${user.companyName.split(' ').join('_')}/${user.id}/${req.body.timeStamp}/${req.body.name}`;
 
  
         const fileName = file.originalname;
@@ -110,17 +117,31 @@ exports.uploadWork = async(req,res) =>{
         return res.status(500).json({message:"Something went wrong"})
     }
 }
-exports.getWorksData = (works,projectId,projectName) =>{
+exports.getWorksData = async(works,projectId,projectName,companyId) =>{
   
     const worksData = []
+    const languageRate = db.collection('metadata').doc(`${companyId}_languageRates`)
+    const languageRateData = (await languageRate.get()).data()
+    console.log(languageRateData)
     works.forEach( (work) => {
+
         let cost = 0;
-        if(Number(work?.wordCount) > 0){
-            cost = (Number(work.wordCount) * 2.2) * work.targetLanguage?.length;
-        }
-        else if(Number(work?.value)){
-            cost = (Number(work.value) * 1.5) * work.targetLanguage?.length
-        }
+        let sourceLanguage = String(work.sourceLanguage).toLowerCase();
+        let wordCount = Number(work.wordCount);
+
+        work.targetLanguage.forEach((language) =>{
+            let targetLanguage = String(language.lang).toLowerCase()
+            if(languageRateData && languageRateData.hasOwnProperty(`${sourceLanguage}-${targetLanguage}`)){
+                if(wordCount > 0)
+                    cost += (languageRateData[`${sourceLanguage}-${targetLanguage}`] * wordCount)
+                else
+                    cost += (languageRateData[`${sourceLanguage}-${targetLanguage}`] * work.value)
+            }
+            else{
+                work.wordCount > 0 ? cost += (3 * wordCount) :
+                cost += (3 * work.value)
+            }
+        })
         
         worksData.push({
             ...work,
@@ -131,7 +152,7 @@ exports.getWorksData = (works,projectId,projectName) =>{
             currentStatus:"In Progress"
         })
     })
-
+    
     return worksData
 }
 exports.formatJobWiseData = (works) =>{

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useTable, useFilters } from 'react-table';
 
 import dayjs from 'dayjs';
-import { generateReportsTableColumn } from '../../data/tableColumns';
+import { generateReportsTableColumn } from '../../../data/tableColumns';
 
 
 const GenerateReportsTable = () => {

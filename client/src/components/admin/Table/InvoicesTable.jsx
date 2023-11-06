@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux';
 import { useTable } from 'react-table';
-import { invoiceTableColumn } from '../../data/tableColumns';
+import { invoiceTableColumn } from '../../../data/tableColumns';
 
 
 const InvoicesTable = () => {

@@ -1,14 +1,14 @@
 import dayjs from "dayjs";
 import { Link } from "react-router-dom";
 
-import UserEditButton from "../admin/UserEditButton";
-import StatusFilter from "../Common/Filters/StatusFilter";
-import EndDateFilter from "../Common/Filters/EndDateFilter";
-import SelectContentType from "../Select/SelectContentType";
-import StartDateFilter from "../Common/Filters/StartDateFilter";
-import UserDeactivateButton from "../admin/UserDeactivateButton";
-import SelectSourceLanguage from "../Select/SelectSourceLanguage";
-import SelectTargetLanguage from "../Select/SelectTargetLanguage";
+import UserEditButton from "../components/admin/UserEditButton";
+import StatusFilter from "../components/Common/Filters/StatusFilter";
+import EndDateFilter from "../components/Common/Filters/EndDateFilter";
+import SelectContentType from "../components/Select/SelectContentType";
+import StartDateFilter from "../components/Common/Filters/StartDateFilter";
+import UserDeactivateButton from "../components/admin/UserDeactivateButton";
+import SelectSourceLanguage from "../components/Select/SelectSourceLanguage";
+import SelectTargetLanguage from "../components/Select/SelectTargetLanguage";
 
 export const displayTableColumns = [
     {
@@ -243,7 +243,8 @@ export const projectDownloadTable = [
     },
     {
         Header:"Download Status",
-        accessor:"downloadStatus"
+        accessor:"downloadUrl",
+        Cell:(info) => <a href={info.value} className="text-blue-500 hover:underline " download>{info.value && 'Download'}</a>
     }
 ]
 

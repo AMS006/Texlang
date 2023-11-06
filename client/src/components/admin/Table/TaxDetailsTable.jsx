@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTable } from 'react-table';
 import { useSelector } from 'react-redux';
-import { taxDetailTableColumn } from '../../data/tableColumns';
+import { taxDetailTableColumn } from '../../../data/tableColumns';
 
 const TaxDetailTable = () => {
     const { loading } = useSelector((state) => state.work)

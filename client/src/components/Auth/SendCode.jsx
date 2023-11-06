@@ -57,12 +57,12 @@ const SendCode = () => {
 
                 <Input type='password' placeholder={'Enter Password'} label={'Password'} id={'password'} register={{ ...register('password') }} errorMessage={errors.password?.message} />
 
-                <button className={`bg-blue-500 py-1.5 px-2.5 text-white rounded ${loading ? 'opacity-50 cursor-default' : 'hover:opacity-95'}`} disabled={loading}>{loading ? 'Loading...' : 'Send Code'}</button>
+                <button className={`bg-blue-500 py-1.5 px-2.5 text-white rounded select-none ${loading ? 'opacity-50 cursor-default' : 'hover:opacity-95'}`} disabled={loading}>{loading ? 'Loading...' : 'Send Code'}</button>
 
             </form>
 
             <div className='flex justify-end'>
-                <button className='text-sm text-gray-600 hover:text-blue-600' onClick={() => dispatch(setForgotPassword(true))}>Forgot Password?</button>
+                <button className='text-sm text-gray-600 select-none hover:text-blue-600' onClick={() => dispatch(setForgotPassword(true))}>Forgot Password?</button>
             </div>
         </div>
     )

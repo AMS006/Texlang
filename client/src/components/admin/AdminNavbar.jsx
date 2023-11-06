@@ -1,14 +1,18 @@
-import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { SlPuzzle } from 'react-icons/sl'
 import { BiWalletAlt } from 'react-icons/bi'
 import { TbFileInvoice, TbReport } from 'react-icons/tb'
-import { BsChevronLeft } from 'react-icons/bs'
+import { BsChevronLeft, BsChevronDown } from 'react-icons/bs'
 import { MdOutlineDiamond } from 'react-icons/md'
 import { AiOutlineHome, AiOutlineUser } from 'react-icons/ai'
+import { useDispatch, useSelector } from 'react-redux'
+import { setProjectTabOpen } from '../../redux/reducers/user'
 
 const AdminNavbar = () => {
-    const [toggleProject, setToggleProject] = useState(false)
+
+    const { projectTabOpen } = useSelector((state) => state.user)
+    const dispatch = useDispatch()
+
     return (
         <nav className='px-2'>
             <div className='py-2.5'>
@@ -20,14 +24,14 @@ const AdminNavbar = () => {
             <h3 className='text-lg capitalize text-gray-300 px-2.5'>FEATRURES</h3>
             <div className='flex flex-col gap-2.5 py-2.5 '>
                 <div className='px-2'>
-                    <div className='flex items-center justify-between select-none cursor-pointer py-2.5' onClick={() => setToggleProject((prev) => !prev)}>
+                    <div className='flex items-center justify-between select-none cursor-pointer py-2.5' onClick={() => dispatch(setProjectTabOpen(!projectTabOpen))}>
                         <div className='flex items-center gap-1.5'>
                             <MdOutlineDiamond size={20} />
                             <span>Projects</span>
                         </div>
-                        <BsChevronLeft />
+                        {projectTabOpen ? <BsChevronDown /> : <BsChevronLeft />}
                     </div>
-                    <div className={`bg-[#28303b] overflow-hidden transition-all duration-200 ease-linear ${toggleProject ? 'h-auto max-h-full p-2' : 'max-h-0'}`}>
+                    <div className={`bg-[#28303b] overflow-hidden transition-all duration-200 ease-linear ${projectTabOpen ? 'h-auto max-h-full p-2' : 'max-h-0'}`}>
                         <NavLink to={'/Enterprise/EnterpriseLanding'} className='flex items-center gap-2.5 hover:bg-[#67707975] px-2.5 py-1.5'>
                             Add New Project
                         </NavLink>

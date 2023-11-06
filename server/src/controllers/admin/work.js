@@ -65,7 +65,7 @@ exports.getJobWiseData = async(req,res) =>{
     try {
         const user = req.user;
 
-        const jobWiseDataRef =  db.collection('metadata').doc(`${user?.companyId.split(' ').join('_')}_jobWiseData`)
+        const jobWiseDataRef =  db.collection('metadata').doc(`${user?.companyId}_jobWiseData`)
         const jobWiseData = await jobWiseDataRef.get();
 
         if(!jobWiseData.exists)

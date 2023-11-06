@@ -3,7 +3,7 @@ import { useTable } from 'react-table';
 import { useSelector } from 'react-redux';
 
 import './table.css'
-import { displayTableColumns } from '../data/tableColumns';
+import { displayTableColumns } from '../../data/tableColumns';
 
 
 
@@ -22,7 +22,7 @@ const DisplayTable = () => {
             data,
         },
     );
-
+    console.log(data)
     return (
         <div className=''>
             <table {...getTableProps()} className="table ">

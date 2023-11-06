@@ -2,10 +2,11 @@ const validator = require('validator')
 
 const {db, admin} = require('../../firebase')
 const { getWorksData, formatJobWiseData } = require('./work')
+const { getDownloadUrl } = require('../helper')
 
 exports.addProject = async(req,res) =>{
     try {
-        const {name,department,works,totalCost,description} = req.body
+        const {name,department,works,description} = req.body
         const user = req.user
         
         if(!user)
@@ -20,33 +21,42 @@ exports.addProject = async(req,res) =>{
 
         const userRef =  db.collection('users').doc(user.id)
         const projectRef = db.collection('projects').doc()
-        const jobWiseDataRef = db.collection('metadata').doc(`${user.companyName.split(' ').join('_')}_jobWiseData`)
+        const jobWiseDataRef = db.collection('metadata').doc(`${user.companyId}_jobWiseData`)
 
          const userDetail = {
             email: user.email,
             name:user.name
         }
-        const start_date = admin.firestore.FieldValue.serverTimestamp()
-        const twoDaysInSeconds = 2 * 24 * 60 * 60; // 2 days in seconds
-        const date = new Date();
-        date.setSeconds(date.getSeconds() + twoDaysInSeconds);
-        const end_date = admin.firestore.Timestamp.fromDate(date);
+        const wordCount = works.reduce((acc,work) => acc + Number(work.wordCount),0)
+        const numberOfLanguages = works.reduce((acc,work) => acc + work.targetLanguage.length,0)
 
+        const createdAt = admin.firestore.FieldValue.serverTimestamp()
+        const start_date = new Date();
+        const end_date = new Date(start_date);
+        end_date.setDate(start_date.getDate() + 2);
         
+        const projectId = projectRef.id
+        const worksData = await getWorksData(works,projectId,name,user.companyId)
 
+        const totalCost = worksData.reduce((acc,work) => acc + Number(work.cost),0)
         const projectData = {
             name,
             department,
             totalCost:Number(totalCost),
-            createdAt: start_date,
+            createdAt,
+            start_date,
             end_date,
             description:description?description:'',
             userId:user.id,
             user: userDetail,
+            wordCount,
+            numberOfLanguages,
             companyId: user?.companyId,
             companyName: user?.companyName,
             status: "In Progress",
+            paymentSuccess:false
         }
+        
 
         // Transaction to Update the billed amount of user to add Project and associated work with it and to update JobWiseData
         await db.runTransaction(async(transaction)=>{
@@ -57,13 +67,21 @@ exports.addProject = async(req,res) =>{
             
             transaction.set(projectRef,projectData)
 
-            const projectId = projectRef.id
-            const worksData = getWorksData(works,projectId,name)
-
+           
+            const batch = db.batch();
             worksData.forEach((work) =>{
                 const workRef = db.collection('works').doc();
-                transaction.set(workRef,{...work})
+                batch.set(workRef,{...work,
+                    userId:user.id,
+                    userEmail:user.email,
+                    companyId:user.companyId,
+                    companyName:user.companyName,
+                    start_date,
+                    end_date,
+                    projectName:name,
+                })
             })
+            await batch.commit()
 
             const jobWiseData = formatJobWiseData(works)
 
@@ -102,17 +120,9 @@ exports.getProjects = async (req, res) => {
         const projects = projectSnapshot.docs.map((doc) =>{
             const id = doc.id
             const projectDoc = doc.data();
-            const start_date_timestamp = {
-                seconds: projectDoc.createdAt._seconds,
-                nanoseconds: projectDoc.createdAt._nanoseconds
-            };
-            const end_date_timestamp = {
-                seconds: projectDoc.end_date._seconds,
-                nanoseconds: projectDoc.end_date._nanoseconds
-            }
-
-            const start_date = new Date(start_date_timestamp.seconds * 1000 + start_date_timestamp.nanoseconds / 1000000);
-            const end_date = new Date(end_date_timestamp.seconds * 1000 + end_date_timestamp.nanoseconds / 1000000);
+            
+            const start_date = new Date(projectDoc.start_date.seconds * 1000 + projectDoc.start_date._nanoseconds / 1000000);
+            const end_date = new Date(projectDoc.end_date.seconds * 1000 + projectDoc.end_date._nanoseconds / 1000000);
 
             return {
                 id,
@@ -147,20 +157,28 @@ exports.getProjectDetailsUser = async(req,res) =>{
         const workCollection = db.collection('works').where('projectId' ,'==',id)
         const worksData = (await workCollection.get()).docs
 
-        const works = worksData.map((data) =>{
-            const work = data.data();
-            const id = data.id
-            return{
+        const works = []
+        for(let i = 0;i<worksData.length;i++){
+            const work = worksData[i].data();
+            const id = worksData[i].id;
+            for(let i = 0;i<work.targetLanguage.length;i++){
+                if(work.targetLanguage[i].downloadPath){
+                    const downloadUrl = await getDownloadUrl(work.targetLanguage[i].downloadPath)
+                    
+                    work.targetLanguage[i].downloadUrl = downloadUrl
+                }
+            }
+            
+            const updatedWork ={
                 id,
                 name:work?.name,
                 sourceLanguage:work?.sourceLanguage,
                 approvalStatus:work?.approvalStatus,
                 currentStatus:work?.currentStatus,
                 targetLanguage:work?.targetLanguage
-
             }
-        })
-
+            works.push(updatedWork)
+        }
         const project = {
             name: data.name,
         }

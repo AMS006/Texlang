@@ -10,6 +10,7 @@ const  initialState = {
     forgotPassword:false,
     changePassword:false,
     allUserLoading: false,
+    projectTabOpen:false,
     forgotPasswordEmail:undefined,
 }
 
@@ -38,6 +39,9 @@ const userSlice = createSlice({
         },
         setUserData: (state, action) => {
             state.userData = action.payload
+        },
+        setProjectTabOpen:(state,action)=>{
+            state.projectTabOpen = action.payload
         },
         setUser:(state,action) =>{
             state.loading = false
@@ -73,6 +77,6 @@ const userSlice = createSlice({
     }
 })
 
-export const {userRequest,getAllUserRequest,setUser,updateUser,clearUser,setUserError,setForgotPasswordEmail,setAllUsers,setUserData ,setCodeSend, setForgotPassword, setChangePassword,clearAllUsers} = userSlice.actions
+export const {userRequest,getAllUserRequest,setUser,setProjectTabOpen,updateUser,clearUser,setUserError,setForgotPasswordEmail,setAllUsers,setUserData ,setCodeSend, setForgotPassword, setChangePassword,clearAllUsers} = userSlice.actions
 
 export default userSlice.reducer

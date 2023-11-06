@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useTable } from 'react-table';
 import { useSelector } from 'react-redux';
-import { workTableColumn } from '../../data/tableColumns';
+import { workTableColumn } from '../../../data/tableColumns';
 
 
 const WorksTable = () => {

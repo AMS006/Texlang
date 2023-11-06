@@ -36,19 +36,19 @@ const ProjectDetail = () => {
                         <div className='grid md:grid-cols-4 sm:grid-cols-2 grid-cols-1 '>
                             <div className='flex gap-2 bg-blue-200 text-blue-600 px-2.5 py-1'>
                                 <h2 className='font-semibold'>File Name:</h2>
-                                <h3 className='capitalize'>{work.name}</h3>
+                                <h3 >{work?.name}</h3>
                             </div>
                             <div className='flex gap-2 bg-pink-200 text-pink-600 px-2.5 py-1'>
                                 <h2 className='font-semibold'>Source Language:</h2>
-                                <h3 className='capitalize'>{work.sourceLanguage}</h3>
+                                <h3 className='capitalize'>{work?.sourceLanguage}</h3>
                             </div>
                             <div className='flex gap-2 bg-yellow-100 text-yellow-600 px-2.5 py-1'>
                                 <h2 className='font-semibold'>Approval Status:</h2>
-                                <h3 className='capitalize'>{work.approvalStatus}</h3>
+                                <h3 className='capitalize'>{work?.approvalStatus}</h3>
                             </div>
                             <div className='flex gap-2 bg-green-200 text-green-600 px-2.5 py-1'>
                                 <h2 className='font-semibold'>Current Status:</h2>
-                                <h3 className='capitalize'>{work.currentStatus}</h3>
+                                <h3 className='capitalize'>{work?.currentStatus}</h3>
                             </div>
                         </div>
                         <div className='my-4'>

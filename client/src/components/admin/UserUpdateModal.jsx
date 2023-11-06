@@ -26,9 +26,8 @@ const UserUpdateModal = ({ open, setOpen, user }) => {
         setLoading(true)
         await axios({
           method: "PUT",
-          url: "http://localhost:4000/api/admin/updateUser",
+          url: "http://localhost:4000/api/admin/user/updateUser",
           data: { firstName, lastName, id: user.id, role },
-          withCredentials: true
         })
         setLoading(false)
         setOpen(false)
